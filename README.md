@@ -54,7 +54,8 @@ Mọi tính toán dùng ngày **giờ local của trình duyệt**, không dùng
 ```
 src/
   lib/
-    ledger.ts          # Core logic hạn mức
+    ledger.ts          # Logic hạn mức (theo tháng dương lịch — giữ làm chuẩn tham chiếu)
+    cycle.ts           # Logic vòng chi tiêu (tổng quát hoá: ngày bắt đầu vòng user-set)
     money.ts           # Format tiền kiểu Việt Nam + parse input
     supabaseClient.ts  # Browser Supabase client (lazy)
     server/supabase.ts # Server Supabase client (SSR, cookie)
@@ -63,13 +64,15 @@ src/
     +layout.*          # Root layout (font, css, session)
     (app)/             # Nhóm trang có đăng nhập + bottom nav
       +page.svelte     # "Hôm nay": hero số dư + thêm/xoá chi tiêu
-      history/         # "Lịch sử": xem theo tháng
-      stats/           # "Thống kê": tóm tắt / biểu đồ / danh sách theo tháng
-      settings/        # "Cài đặt": đổi hạn mức + đăng xuất
+      history/         # "Lịch sử": xem theo vòng
+      stats/           # "Thống kê": tóm tắt / biểu đồ / danh sách theo vòng
+      settings/        # "Cài đặt": đổi hạn mức + ngày bắt đầu vòng + đăng xuất
     auth/login|signup  # Đăng nhập / đăng ký
     setup/             # Hướng dẫn cấu hình khi chưa có Supabase
 supabase/setup.sql     # SQL tạo bảng + RLS + trigger
-scripts/verify-ledger.mjs # Test tự kiểm logic hạn mức
+supabase/migrations/   # Migration cho project đã có (vd thêm cột day_start)
+scripts/verify-ledger.mjs # Test logic hạn mức (spec §3)
+scripts/verify-cycle.mjs  # Test logic vòng chi tiêu
 ```
 
 ## Deploy
@@ -87,4 +90,11 @@ Frontend SvelteKit dùng adapter `auto`: tự detect **Vercel/Netlify** khi depl
 - [x] Trang Lịch sử hiển thị đúng số liệu từng ngày (dùng cùng `computeMonthLedger`).
 - [x] Đổi `default_limit` ở Cài đặt → áp dụng cho lần tính tiếp theo.
 - [x] Form thêm chi có **chọn ngày** (mặc định hôm nay) để nhập bù các khoản chi của ngày trước.
-- [x] Trang Thống kê (`/stats`): tóm tắt tháng + biểu đồ Chart.js (số dư/đã chi) + danh sách ngày.
+- [x] Trang Thống kê (`/stats`): tóm tắt vòng + biểu đồ Chart.js (số dư/đã chi) + danh sách ngày.
+- [x] **Vòng chi tiêu tuỳ chỉnh**: đổi ngày bắt đầu vòng (1–31, mặc định 1 = tháng dương lịch) ở Cài đặt; toàn bộ Hôm nay/Lịch sử/Thống kê chuyển sang vòng đó (vd mùng 21 → mùng 20 tháng sau).
+
+## Ghi chú về vòng chi tiêu
+
+- `day_start` lưu trong `profiles` (mặc định `1` = theo tháng dương lịch, đúng spec).
+- Logic tính rõ ràng trong [`src/lib/cycle.ts`](./src/lib/cycle.ts); kiểm bằng `pnpm run test:cycle`.
+- **Project Supabase đã có dữ liệu**: sau khi cập nhật schema trên dashboard, chạy thêm `supabase/migrations/001_add_day_start.sql` để thêm cột `day_start` cho các profile cũ.

@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { createClient } from '$lib/supabaseClient';
 	import { isSupabaseConfigured } from '$lib/env';
+	import Spinner from '$lib/Spinner.svelte';
 
 	const supabase = createClient();
 
@@ -65,6 +66,7 @@
 				bind:value={email}
 				autocomplete="email"
 				class="mt-1 w-full rounded-xl border border-line bg-white px-4 py-3 text-base outline-none focus:border-ink"
+				placeholder="example@gmail.com"
 			/>
 		</div>
 		<div>
@@ -76,14 +78,20 @@
 				bind:value={password}
 				autocomplete="current-password"
 				class="mt-1 w-full rounded-xl border border-line bg-white px-4 py-3 text-base outline-none focus:border-ink"
+				placeholder="*******"
 			/>
 		</div>
 		<button
 			type="submit"
 			disabled={loading}
-			class="w-full rounded-xl bg-ink py-3 text-base font-semibold text-white disabled:opacity-50"
+			class="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-base font-semibold text-white disabled:opacity-60"
 		>
-			{loading ? 'Đang đăng nhập…' : 'Đăng nhập'}
+			{#if loading}
+				<Spinner color="white" size={18} />
+				Đang đăng nhập…
+			{:else}
+				Đăng nhập
+			{/if}
 		</button>
 	</form>
 

@@ -1,50 +1,37 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import {
-		addMonths,
-		computeMonthLedger,
-		currentMonth,
-		monthIsAfter,
-		monthKeyToString,
+		computeCycleLedger,
+		prevCycle,
+		nextCycle,
 		todayKey,
-		type LedgerRow
-	} from '$lib/ledger';
+		type CycleBound
+	} from '$lib/cycle';
 	import { formatMoney, formatSignedMoney } from '$lib/money';
 	import Chart from 'chart.js/auto';
 
 	let { data } = $props();
 
-	const defaultLimit = $derived(data.defaultLimit ?? 100000);
-	const requested = $derived(data.requestedMonth ?? currentMonth());
-	const cur = $derived(currentMonth());
-	const isCurrentMonth = $derived(
-		requested.year === cur.year && requested.month === cur.month
-	);
-	const canGoNext = $derived(!monthIsAfter(addMonths(requested, 1), cur));
+	const defaultLimit = $derived((data.defaultLimit as number | undefined) ?? 100000);
+	const dayStart = $derived((data.dayStart as number | undefined) ?? 1);
+	const bound: CycleBound = $derived(data.bound);
+	const isCurrent = $derived(data.isCurrent);
 
 	const rows = $derived.by(() => {
 		const spentByDate: Record<string, number> = {};
-		for (const e of data.monthExpenses) {
+		for (const e of data.cycleExpenses) {
 			spentByDate[e.date] = (spentByDate[e.date] ?? 0) + e.amount;
 		}
-		return computeMonthLedger({
-			year: requested.year,
-			month: requested.month,
-			defaultLimit,
-			spentByDate
-		});
+		return computeCycleLedger(bound, defaultLimit, spentByDate);
 	});
 
 	const today = $derived(todayKey());
-	const visibleRows = $derived(
-		isCurrentMonth ? rows.filter((r) => r.date <= today) : rows
-	);
+	const visibleRows = $derived(isCurrent ? rows.filter((r) => r.date <= today) : rows);
 
 	// ---- View toggle ----
 	type View = 'summary' | 'chart' | 'list';
 	let view = $state<View>('summary');
-	// Trong chart: số liệu hiển thị là balance hay spending
 	let chartMetric = $state<'balance' | 'spent'>('balance');
 	const chartMetrics = [
 		{ id: 'balance', label: 'Số dư' },
@@ -55,34 +42,28 @@
 	const summary = $derived.by(() => {
 		const rs = visibleRows;
 		const totalSpent = rs.reduce((s, r) => s + r.spent, 0);
-		const totalLimit = rs.reduce((s, r) => s + r.limit, 0);
 		const endBalance = rs.length ? rs[rs.length - 1].balance : 0;
 		const nDays = rs.length;
 		const avgSpend = nDays ? totalSpent / nDays : 0;
 		const daysOver = rs.filter((r) => r.balance < 0).length;
 		const daysSurplus = rs.filter((r) => r.balance > 0).length;
-		const daysZero = rs.filter((r) => r.balance === 0).length;
 
-		// Ngày chi nhiều / tiết kiệm nhiều nhất
-		let maxSpentDay: { day: number; value: number } | null = null;
-		let bestSaveDay: { day: number; value: number } | null = null;
+		let maxSpentDay: { cycleDay: number; value: number } | null = null;
+		let bestSaveDay: { cycleDay: number; value: number } | null = null;
 		for (const r of rs) {
-			if (!maxSpentDay || r.spent > maxSpentDay.value) maxSpentDay = { day: r.day, value: r.spent };
-			if (!bestSaveDay || r.balance > bestSaveDay.value) bestSaveDay = { day: r.day, value: r.balance };
+			if (!maxSpentDay || r.spent > maxSpentDay.value) maxSpentDay = { cycleDay: r.cycleDay, value: r.spent };
+			if (!bestSaveDay || r.balance > bestSaveDay.value) bestSaveDay = { cycleDay: r.cycleDay, value: r.balance };
 		}
-		// Số dư cuối tháng so với tổng hạn mức -> "tiết kiệm" hoặc "vượt"
 		const saved = endBalance >= 0 ? endBalance : 0;
 		const deficit = endBalance < 0 ? -endBalance : 0;
 
 		return {
 			totalSpent,
-			totalLimit,
 			endBalance,
 			nDays,
 			avgSpend,
 			daysOver,
 			daysSurplus,
-			daysZero,
 			maxSpentDay,
 			bestSaveDay,
 			saved,
@@ -90,15 +71,17 @@
 		};
 	});
 
-	const monthLabel = $derived.by(() => {
-		const d = new Date();
-		d.setFullYear(requested.year, requested.month - 1, 1);
-		return d.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
-	});
+	function fmt(s: string): string {
+		const [y, m, d] = s.split('-').map(Number);
+		return `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`;
+	}
+	const header = $derived.by(() =>
+		isCurrent ? `${fmt(bound.start)} – hôm nay` : `${fmt(bound.start)} – ${fmt(bound.end)}`
+	);
 
-	function goMonth(delta: number) {
-		const target = addMonths(requested, delta);
-		goto(`/stats?month=${monthKeyToString(target)}`, {
+	function goCycle(delta: number) {
+		const target = delta < 0 ? prevCycle(bound, dayStart) : nextCycle(bound, dayStart);
+		goto(`/stats?start=${target.start}`, {
 			replaceState: false,
 			invalidateAll: true
 		});
@@ -109,12 +92,11 @@
 	let chart: Chart | null = null;
 
 	$effect(() => {
-		// Chỉ tạo chart khi đang ở view chart & có canvas
 		if (view !== 'chart' || !canvas) return;
-		const labels = visibleRows.map((r) => String(r.day));
+		const labels = visibleRows.map((r) => `N${r.cycleDay}`);
+		const dateLabels = visibleRows.map((r) => r.date);
 		const metric = chartMetric;
 		const values = visibleRows.map((r) => (metric === 'balance' ? r.balance : r.spent));
-		const lineColor = metric === 'balance' ? '#2F7A5E' : '#16302B';
 
 		if (chart) chart.destroy();
 
@@ -142,6 +124,10 @@
 					legend: { display: false },
 					tooltip: {
 						callbacks: {
+							title: (items) => {
+								const i = items[0]?.dataIndex;
+								return dateLabels[i] ? fmt(dateLabels[i]) : '';
+							},
 							label: (ctx) => {
 								const v = ctx.raw as number;
 								return formatSignedMoney(v);
@@ -174,19 +160,20 @@
 	<title>Thống kê — chi tiêu</title>
 </svelte:head>
 
-<!-- Tiêu đề + chuyển tháng -->
+<!-- Tiêu đề + chuyển vòng -->
 <div class="mb-5">
-	<h1 class="font-display text-xl font-bold capitalize">{monthLabel}</h1>
+	<h1 class="font-display text-xl font-bold">Thống kê</h1>
+	<p class="mt-0.5 text-xs text-muted">Vòng {header}</p>
 	<div class="mt-3 flex items-center justify-between gap-3">
-		<button onclick={() => goMonth(-1)} class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium">
-			&larr; Tháng trước
+		<button onclick={() => goCycle(-1)} class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium">
+			&larr; Vòng trước
 		</button>
 		<button
-			onclick={() => goMonth(1)}
-			disabled={!canGoNext}
+			onclick={() => goCycle(1)}
+			disabled={isCurrent}
 			class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium disabled:opacity-40"
 		>
-			Tháng sau &rarr;
+			Vòng sau &rarr;
 		</button>
 	</div>
 </div>
@@ -208,7 +195,7 @@
 {#if view === 'summary'}
 	{#if visibleRows.length === 0}
 		<p class="rounded-xl border border-dashed border-line bg-white/60 px-4 py-6 text-center text-sm text-muted">
-			Tháng này chưa có dữ liệu.
+			Vòng này chưa có dữ liệu.
 		</p>
 	{:else}
 		<div class="grid grid-cols-2 gap-3">
@@ -225,12 +212,12 @@
 			<ul class="mt-2 space-y-1.5 text-sm text-muted">
 				<li>
 					Ngày chi nhiều nhất:
-					<span class="text-ink">ngày {summary.maxSpentDay?.day}</span>
+					<span class="text-ink">N{summary.maxSpentDay?.cycleDay}</span>
 					<span class="font-display ml-1 font-semibold text-ink">{formatMoney(summary.maxSpentDay?.value ?? 0)}</span>
 				</li>
 				<li>
 					Ngày tiết kiệm nhiều nhất:
-					<span class="text-ink">ngày {summary.bestSaveDay?.day}</span>
+					<span class="text-ink">N{summary.bestSaveDay?.cycleDay}</span>
 					<span class="font-display ml-1 font-semibold text-surplus">{formatSignedMoney(summary.bestSaveDay?.value ?? 0)}</span>
 				</li>
 			</ul>
@@ -257,7 +244,7 @@
 	</div>
 {:else}
 	<div class="rounded-2xl border border-line bg-white">
-		<div class="grid grid-cols-[3rem_1fr_1fr_1fr] gap-2 border-b border-line px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted">
+		<div class="grid grid-cols-[3.5rem_1fr_1fr_1fr] gap-2 border-b border-line px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted">
 			<span>Ngày</span>
 			<span class="text-right">Hạn mức</span>
 			<span class="text-right">Đã chi</span>
@@ -265,8 +252,8 @@
 		</div>
 		<ul>
 			{#each visibleRows as row (row.date)}
-				<li class="grid grid-cols-[3rem_1fr_1fr_1fr] items-center gap-2 border-b border-line px-4 py-2.5 text-sm last:border-0">
-					<span class="font-display font-semibold">{row.day}</span>
+				<li class="grid grid-cols-[3.5rem_1fr_1fr_1fr] items-center gap-2 border-b border-line px-4 py-2.5 text-sm last:border-0">
+					<span class="font-display font-semibold">N{row.cycleDay}</span>
 					<span class="font-display tabular-nums text-right text-muted">{formatMoney(row.limit)}</span>
 					<span class="tabular-nums text-right">{formatMoney(row.spent)}</span>
 					<span class="font-display tabular-nums text-right font-semibold {row.balance > 0 ? 'text-surplus' : row.balance < 0 ? 'text-deficit' : 'text-muted'}">
@@ -278,7 +265,7 @@
 	</div>
 {/if}
 
-{#if isCurrentMonth}
+{#if isCurrent}
 	<p class="mt-4 text-xs text-muted">Đang hiển thị đến ngày hôm nay.</p>
 {/if}
 

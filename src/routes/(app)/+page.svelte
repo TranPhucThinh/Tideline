@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { createClient } from '$lib/supabaseClient';
-	import { computeMonthLedger, currentMonth, todayKey } from '$lib/ledger';
+	import { todayKey } from '$lib/ledger';
+	import { currentCycle, computeCycleLedger, type CycleBound } from '$lib/cycle';
 	import { formatMoney, parseMoneyInput } from '$lib/money';
+	import DateField from '$lib/DateField.svelte';
+	import Spinner from '$lib/Spinner.svelte';
 
 	let { data } = $props();
 
@@ -16,8 +19,11 @@
 		created_at: string;
 	};
 
-	// Toàn bộ chi tiêu trong tháng hiện tại — nguồn sự thật duy nhất để tính ledger.
-	let monthExpenses = $state<ExpenseItem[]>(data.monthExpenses);
+	const dayStart = $derived((data.dayStart as number | undefined) ?? 1);
+	const defaultLimit = $derived((data.defaultLimit as number | undefined) ?? 100000);
+
+	// Toàn bộ chi tiêu trong vòng hiện tại — nguồn sự thật duy nhất để tính ledger.
+	let cycleExpenses = $state<ExpenseItem[]>(data.cycleExpenses);
 	// (gán snapshot ban đầu; về sau chỉ đổi bằng thao tác thêm/xoá ở client)
 
 	// Form state
@@ -27,32 +33,38 @@
 	let submitting = $state(false);
 	let formError = $state('');
 
-	// Tính ledger cả tháng (một lần) mỗi khi dữ liệu/defaultLimit đổi.
-	let rows = $derived.by(() => {
-		const defaultLimit = data.defaultLimit ?? 100000;
-		const mdl = currentMonth();
+	// Vòng hiện tại + tính ledger cả vòng (một lần) mỗi khi dữ liệu/defaultLimit/start đổi.
+	const bound = $derived(currentCycle(dayStart));
+	const rows = $derived.by(() => {
 		const spentByDate: Record<string, number> = {};
-		for (const e of monthExpenses) {
+		for (const e of cycleExpenses) {
 			spentByDate[e.date] = (spentByDate[e.date] ?? 0) + e.amount;
 		}
-		return computeMonthLedger({
-			year: mdl.year,
-			month: mdl.month,
-			defaultLimit,
-			spentByDate
-		});
+		return computeCycleLedger(bound, defaultLimit, spentByDate);
 	});
 
 	const today = $derived(todayKey());
 	const todayRow = $derived(rows.find((r) => r.date === today) ?? null);
 	const balance = $derived(todayRow?.balance ?? 0);
-	const limitToday = $derived(todayRow?.limit ?? data.defaultLimit ?? 100000);
+	const limitToday = $derived(todayRow?.limit ?? defaultLimit);
 	const spentToday = $derived(todayRow?.spent ?? 0);
 	const isSurplus = $derived(balance >= 0);
 
+	// Nhãn vòng, ví dụ "Vòng 21/07 – 20/08"
+	const boundLabel = $derived.by(() => formatRange(bound));
+
+	function formatRange(b: CycleBound): string {
+		const { start, end } = b;
+		const lbl = (s: string) => {
+			const [y, m, d] = s.split('-').map(Number);
+			return `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`;
+		};
+		return `${lbl(start)} – ${lbl(end)}`;
+	}
+
 	// Chi tiêu theo ngày đang chọn trong form (mới nhất lên đầu)
 	const selectedExpenses = $derived(
-		monthExpenses
+		cycleExpenses
 			.filter((e) => e.date === dateInput)
 			.sort((a, b) => a.created_at.localeCompare(b.created_at))
 			.reverse()
@@ -100,8 +112,8 @@
 			}
 			const row = inserted?.[0];
 			if (row) {
-				// Cập nhật lại toàn bộ tháng để ledger/hiển thị phản ánh đúng ngày đã chọn
-				monthExpenses = [...monthExpenses, row as ExpenseItem];
+				// Cập nhật danh sách để ledger/hiển thị phản ánh ngày đã chọn
+				cycleExpenses = [...cycleExpenses, row as ExpenseItem];
 				amountInput = '';
 				noteInput = '';
 			}
@@ -112,17 +124,24 @@
 		}
 	}
 
+	let deletingId = $state<string | null>(null);
+
 	async function removeExpense(id: string) {
+		if (deletingId) return; // tránh spam click
+		deletingId = id;
 		const { error } = await supabase.from('expenses').delete().eq('id', id);
 		if (!error) {
-			monthExpenses = monthExpenses.filter((e) => e.id !== id);
+			cycleExpenses = cycleExpenses.filter((e) => e.id !== id);
 		}
+		deletingId = null;
 	}
 </script>
 
 <svelte:head>
 	<title>Hôm nay — chi tiêu</title>
 </svelte:head>
+
+<p class="mb-3 text-xs font-medium text-muted">Vòng {boundLabel}</p>
 
 <!-- Hero -->
 <section
@@ -167,16 +186,12 @@
 	{/if}
 
 	<div class="mt-3 space-y-3">
-		<div>
-			<label for="date" class="text-sm font-medium text-muted">Ngày</label>
-			<input
-				id="date"
-				type="date"
-				bind:value={dateInput}
-				max={today}
-				class="mt-1 w-full rounded-xl border border-line bg-cream px-4 py-3 text-base outline-none focus:border-ink"
-			/>
-		</div>
+		<DateField
+			label="Ngày"
+			value={dateInput}
+			max={today}
+			onchange={(d) => (dateInput = d)}
+		/>
 		<div>
 			<label for="amount" class="text-sm font-medium text-muted">Số tiền (đ)</label>
 			<input
@@ -238,15 +253,20 @@
 					<button
 						onclick={() => removeExpense(exp.id)}
 						aria-label="Xoá khoản chi"
-						class="rounded-lg px-2 py-1 text-muted transition-colors hover:bg-deficit-bg hover:text-deficit"
+						disabled={deletingId === exp.id}
+						class="rounded-lg px-2 py-1 transition-colors {deletingId === exp.id ? 'cursor-wait opacity-60' : 'text-muted hover:bg-deficit-bg hover:text-deficit'}"
 					>
-						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M3 6h18" />
-							<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-							<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-							<path d="M10 11v6" />
-							<path d="M14 11v6" />
-						</svg>
+						{#if deletingId === exp.id}
+							<Spinner color="deficit" size={18} />
+						{:else}
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M3 6h18" />
+								<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+								<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+								<path d="M10 11v6" />
+								<path d="M14 11v6" />
+							</svg>
+						{/if}
 					</button>
 				</li>
 			{/each}

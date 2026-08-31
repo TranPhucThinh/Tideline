@@ -1,41 +1,43 @@
 import type { PageServerLoad } from './$types';
-import {
-	daysInMonth,
-	currentMonth,
-	parseMonthKey,
-	toDateKey
-} from '$lib/ledger';
+import { cycleOf, type CycleBound } from '$lib/cycle';
 
-export const load: PageServerLoad = async ({ url, locals }) => {
+// Hỗ trợ ?start=YYYY-MM-DD (ngày bắt đầu vòng). Mặc định = vòng hiện tại.
+function parseStart(raw: string | null): string | null {
+	if (!raw) return null;
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+	return raw;
+}
+
+export const load: PageServerLoad = async ({ url, locals, parent }) => {
+	const { dayStart } = await parent();
+
 	if (!locals.supabase || !locals.supabaseReady) {
-		return { monthExpenses: [], requestedMonth: currentMonth() };
+		const today = toDateKey(new Date());
+		return { bound: cycleOf(today, dayStart), cycleExpenses: [], dayStart, isCurrent: false };
 	}
 
-	// Đọc tháng từ query ?month=YYYY-MM, mặc định tháng hiện tại.
-	const raw = url.searchParams.get('month');
-	const parsed = raw ? parseMonthKey(raw) : null;
-	const requested = parsed ?? currentMonth();
-	const { year, month } = requested;
-
-	const nDays = daysInMonth(year, month);
-	const from = toDateKey(year, month, 1);
-	const to = toDateKey(year, month, nDays);
+	const cur = cycleOf(toDateKey(new Date()), dayStart);
+	const raw = url.searchParams.get('start');
+	const start = parseStart(raw);
+	const bound: CycleBound = start ? cycleOf(start, dayStart) : cur;
+	const isCurrent = bound.start === cur.start;
 
 	const { data, error } = await locals.supabase
 		.from('expenses')
 		.select('id, user_id, amount, note, date, created_at')
-		.gte('date', from)
-		.lte('date', to)
+		.gte('date', bound.start)
+		.lte('date', bound.end)
 		.order('date', { ascending: true });
 
 	if (error) {
 		// eslint-disable-next-line no-console
-		console.error('load history:', error.message);
-		return { monthExpenses: [], requestedMonth: requested };
+		console.error('load history cycle:', error.message);
+		return { bound, cycleExpenses: [], dayStart, isCurrent };
 	}
 
 	return {
-		monthExpenses: (data ?? []) as Array<{
+		bound,
+		cycleExpenses: (data ?? []) as Array<{
 			id: string;
 			user_id: string;
 			amount: number;
@@ -43,6 +45,13 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 			date: string;
 			created_at: string;
 		}>,
-		requestedMonth: requested
+		dayStart,
+		isCurrent
 	};
 };
+
+function toDateKey(d: Date): string {
+	const mm = String(d.getMonth() + 1).padStart(2, '0');
+	const dd = String(d.getDate()).padStart(2, '0');
+	return `${d.getFullYear()}-${mm}-${dd}`;
+}

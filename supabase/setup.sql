@@ -1,10 +1,11 @@
 -- Setup cho App quản lý chi tiêu hằng ngày
 -- Chạy trong Supabase: SQL Editor
 --
--- 1. Bảng profiles (hạn mức mặc định của mỗi user)
+-- 1. Bảng profiles (hạn mức mặc định + ngày bắt đầu vòng của mỗi user)
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   default_limit numeric not null default 100000,
+  day_start integer not null default 1 check (day_start between 1 and 31),
   created_at timestamptz not null default now()
 );
 

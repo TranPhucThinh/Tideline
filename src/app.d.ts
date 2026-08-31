@@ -14,6 +14,7 @@ declare global {
 			user: User | null;
 			supabaseReady: boolean;
 			defaultLimit?: number;
+			dayStart?: number;
 		}
 		// interface Error {}
 		// interface PageState {}

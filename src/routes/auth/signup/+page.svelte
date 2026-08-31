@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { createClient } from '$lib/supabaseClient';
 	import { isSupabaseConfigured } from '$lib/env';
+	import Spinner from '$lib/Spinner.svelte';
 
 	const supabase = createClient();
 
@@ -111,9 +112,14 @@
 		<button
 			type="submit"
 			disabled={loading}
-			class="w-full rounded-xl bg-ink py-3 text-base font-semibold text-white disabled:opacity-50"
+			class="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-base font-semibold text-white disabled:opacity-60"
 		>
-			{loading ? 'Đang tạo…' : 'Đăng ký'}
+			{#if loading}
+				<Spinner color="white" size={18} />
+				Đang tạo…
+			{:else}
+				Đăng ký
+			{/if}
 		</button>
 	</form>
 

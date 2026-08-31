@@ -1,62 +1,50 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import {
-		addMonths,
-		computeMonthLedger,
-		currentMonth,
-		monthIsAfter,
-		monthKeyToString,
-		todayKey
-	} from '$lib/ledger';
+		computeCycleLedger,
+		prevCycle,
+		nextCycle,
+		todayKey,
+		type CycleBound
+	} from '$lib/cycle';
 	import { formatMoney, formatSignedMoney } from '$lib/money';
 
 	let { data } = $props();
 
-	const defaultLimit = $derived(data.defaultLimit ?? 100000);
-	const requested = $derived(data.requestedMonth ?? currentMonth());
-	const cur = $derived(currentMonth());
-	const isCurrentMonth = $derived(
-		requested.year === cur.year && requested.month === cur.month
-	);
-
-	// Không cho xem tháng tương lai xa hơn tháng hiện tại
-	const nextAllowed = $derived(monthIsAfter(addMonths(requested, 1), cur));
-
-	const canGoNext = $derived(!nextAllowed);
+	const defaultLimit = $derived((data.defaultLimit as number | undefined) ?? 100000);
+	const dayStart = $derived((data.dayStart as number | undefined) ?? 1);
+	const bound: CycleBound = $derived(data.bound);
+	const isCurrent = $derived(data.isCurrent);
 
 	const rows = $derived.by(() => {
 		const spentByDate: Record<string, number> = {};
-		for (const e of data.monthExpenses) {
+		for (const e of data.cycleExpenses) {
 			spentByDate[e.date] = (spentByDate[e.date] ?? 0) + e.amount;
 		}
-		return computeMonthLedger({
-			year: requested.year,
-			month: requested.month,
-			defaultLimit,
-			spentByDate
-		});
+		return computeCycleLedger(bound, defaultLimit, spentByDate);
 	});
 
-	// Nếu là tháng hiện tại, chỉ hiển thị tới ngày hôm nay
+	// Nếu là vòng hiện tại, chỉ hiển thị tới ngày hôm nay
 	const today = $derived(todayKey());
-	const visibleRows = $derived(
-		isCurrentMonth ? rows.filter((r) => r.date <= today) : rows
-	);
+	const visibleRows = $derived(isCurrent ? rows.filter((r) => r.date <= today) : rows);
 
 	const totalSpent = $derived(visibleRows.reduce((s, r) => s + r.spent, 0));
 
-	function goMonth(delta: number) {
-		const target = addMonths(requested, delta);
-		goto(`/history?month=${monthKeyToString(target)}`, {
+	function goCycle(delta: number) {
+		const target = delta < 0 ? prevCycle(bound, dayStart) : nextCycle(bound, dayStart);
+		goto(`/history?start=${target.start}`, {
 			replaceState: false,
 			invalidateAll: true
 		});
 	}
 
-	const monthLabel = $derived.by(() => {
-		const d = new Date();
-		d.setFullYear(requested.year, requested.month - 1, 1);
-		return d.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
+	function fmt(s: string): string {
+		const [y, m, d] = s.split('-').map(Number);
+		return `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`;
+	}
+
+	const header = $derived.by(() => {
+		return isCurrent ? `${fmt(bound.start)} – hôm nay` : `${fmt(bound.start)} – ${fmt(bound.end)}`;
 	});
 </script>
 
@@ -64,25 +52,23 @@
 	<title>Lịch sử — chi tiêu</title>
 </svelte:head>
 
-<!-- Tiêu đề + chuyển tháng -->
+<!-- Tiêu đề + chuyển vòng -->
 <div class="mb-5">
-	<div class="flex items-center justify-between">
-		<h1 class="font-display text-xl font-bold capitalize">{monthLabel}</h1>
-	</div>
+	<h1 class="font-display text-xl font-bold">Lịch sử</h1>
 	<div class="mt-3 flex items-center justify-between">
 		<button
-			onclick={() => goMonth(-1)}
+			onclick={() => goCycle(-1)}
 			class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium"
 		>
-			&larr; Tháng trước
+			&larr; Vòng trước
 		</button>
-		<span class="text-sm text-muted">{formatMoney(totalSpent)} đã chi</span>
+		<span class="text-xs text-muted">{header}<br />{formatMoney(totalSpent)} đã chi</span>
 		<button
-			onclick={() => goMonth(1)}
-			disabled={!canGoNext}
+			onclick={() => goCycle(1)}
+			disabled={isCurrent}
 			class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium disabled:opacity-40"
 		>
-			Tháng sau &rarr;
+			Vòng sau &rarr;
 		</button>
 	</div>
 </div>
@@ -120,11 +106,7 @@
 
 	{#if visibleRows.length === 0}
 		<p class="mt-4 rounded-xl border border-dashed border-line bg-white/60 px-4 py-6 text-center text-sm text-muted">
-			Tháng này chưa có dữ liệu.
+			Vòng này chưa có dữ liệu.
 		</p>
 	{/if}
 </section>
-
-{#if isCurrentMonth}
-	<p class="mt-4 text-xs text-muted">Đang hiển thị đến ngày hôm nay.</p>
-{/if}

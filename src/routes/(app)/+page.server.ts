@@ -1,38 +1,39 @@
 import type { PageServerLoad } from './$types';
-import { currentMonth, daysInMonth, toDateKey } from '$lib/ledger';
+import { currentCycle } from '$lib/cycle';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, parent }) => {
+	// dayStart từ layout (profile). Layout tự chuyển về nếu profile chưa có.
+	const { dayStart } = await parent();
+
 	if (!locals.supabase || !locals.supabaseReady) {
-		return { monthExpenses: [] };
+		return { cycleExpenses: [], dayStart };
 	}
 
-	const { year, month } = currentMonth();
-	const nDays = daysInMonth(year, month);
-	const from = toDateKey(year, month, 1);
-	const to = toDateKey(year, month, nDays);
+	// Vòng hiện tại (chứa hôm nay)
+	const bound = currentCycle(dayStart);
 
-	// Lấy toàn bộ chi tiêu trong tháng hiện tại để tính ledger đầy đủ (BAO gồm hôm nay).
 	const { data, error } = await locals.supabase
 		.from('expenses')
 		.select('id, user_id, amount, note, date, created_at')
-		.gte('date', from)
-		.lte('date', to)
+		.gte('date', bound.start)
+		.lte('date', bound.end)
 		.order('created_at', { ascending: false });
 
 	if (error) {
 		// eslint-disable-next-line no-console
-		console.error('load month expenses:', error.message);
-		return { monthExpenses: [] };
+		console.error('load cycle expenses:', error.message);
+		return { cycleExpenses: [], dayStart };
 	}
 
 	return {
-		monthExpenses: (data ?? []) as Array<{
+		cycleExpenses: (data ?? []) as Array<{
 			id: string;
 			user_id: string;
 			amount: number;
 			note: string | null;
 			date: string;
 			created_at: string;
-		}>
+		}>,
+		dayStart
 	};
 };

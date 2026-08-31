@@ -17,12 +17,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		throw redirect(303, '/auth/login');
 	}
 
-	// Lấy profile (default_limit). Tạo tự động bởi DB trigger khi đăng ký;
-	// nếu chưa có (migration cũ), tự tạo với default 100000.
+	// Lấy profile (default_limit, day_start). Tạo tự động bởi DB trigger khi đăng ký;
+	// nếu chưa có (migration cũ), tự tạo với default 100000 / day_start 1.
 	let profile: Profile | null = null;
 	const { data: prof } = await locals.supabase
 		.from('profiles')
-		.select('id, default_limit, created_at')
+		.select('id, default_limit, day_start, created_at')
 		.eq('id', session.user.id)
 		.single();
 
@@ -31,17 +31,26 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	} else {
 		const insert = await locals.supabase
 			.from('profiles')
-			.insert({ id: session.user.id, default_limit: 100000 })
-			.select('id, default_limit, created_at')
+			.insert({ id: session.user.id, default_limit: 100000, day_start: 1 })
+			.select('id, default_limit, day_start, created_at')
 			.single();
 		if (insert.data) profile = insert.data as Profile;
 	}
 
 	const defaultLimit = profile?.default_limit ?? 100000;
+	const dayStart = clampDayStart(profile?.day_start);
 
 	return {
 		session,
 		supabaseReady: true,
-		defaultLimit
+		defaultLimit,
+		dayStart
 	};
 };
+
+function clampDayStart(v: number | undefined | null): number {
+	if (typeof v !== 'number') return 1;
+	if (v < 1) return 1;
+	if (v > 31) return 31;
+	return Math.round(v);
+}
