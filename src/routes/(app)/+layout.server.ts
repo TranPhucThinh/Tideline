@@ -22,7 +22,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	let profile: Profile | null = null;
 	const { data: prof } = await locals.supabase
 		.from('profiles')
-		.select('id, default_limit, day_start, created_at')
+		.select('id, default_limit, day_start, guide_seen, created_at')
 		.eq('id', session.user.id)
 		.single();
 
@@ -32,19 +32,21 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		const insert = await locals.supabase
 			.from('profiles')
 			.insert({ id: session.user.id, default_limit: 100000, day_start: 1 })
-			.select('id, default_limit, day_start, created_at')
+			.select('id, default_limit, day_start, guide_seen, created_at')
 			.single();
 		if (insert.data) profile = insert.data as Profile;
 	}
 
 	const defaultLimit = profile?.default_limit ?? 100000;
 	const dayStart = clampDayStart(profile?.day_start);
+	const guideSeen = profile ? profile.guide_seen ?? false : false;
 
 	return {
 		session,
 		supabaseReady: true,
 		defaultLimit,
-		dayStart
+		dayStart,
+		guideSeen
 	};
 };
 

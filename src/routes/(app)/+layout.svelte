@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { createClient } from '$lib/supabaseClient';
 	import type { Snippet } from 'svelte';
+	import StepGuide from '$lib/StepGuide.svelte';
 
-	let { children }: { children: Snippet } = $props();
+	let { children, data }: { children: Snippet; data: Record<string, unknown> } = $props();
+
+	const supabase = createClient();
 
 	const navItems = [
 		{ href: '/', label: 'Hôm nay', icon: 'today' },
@@ -11,10 +15,47 @@
 		{ href: '/settings', label: 'Cài đặt', icon: 'settings' }
 	];
 
+	const guideSeen = $derived((data.guideSeen as boolean | undefined) ?? false);
+
+	let helpOpen = $state(false);
+	// Cờ cho biết hướng dẫn đã được tự hiện trong phiên này — đảm bảo chỉ hiện đúng một lần,
+	// kể cả khi data.guideSeen chưa kịp cập nhật từ DB sau khi đóng.
+	let autoShown = $state(false);
+	// Chỉ lưu guide_seen=true khi hướng dẫn tự hiện (lần đầu), không lưu khi mở lại thủ công.
+	let persistOnClose = $state(!guideSeen);
+	let saving = $state(false);
+
+	// Lần truy cập đầu: tự hiện hướng dẫn một lần.
+	$effect(() => {
+		if (!guideSeen && !autoShown) {
+			autoShown = true;
+			persistOnClose = true;
+			helpOpen = true;
+		}
+	});
+
 	function isActive(href: string): boolean {
 		const url = page.url.pathname;
 		if (href === '/') return url === '/';
 		return url.startsWith(href);
+	}
+
+	async function closeGuide() {
+		if (persistOnClose) {
+			persistOnClose = false;
+			saving = true;
+			const userId = (data.session as { user?: { id?: string } } | undefined)?.user?.id;
+			if (userId) {
+				const { error } = await supabase
+					.from('profiles')
+					.update({ guide_seen: true })
+					.eq('id', userId);
+				// Lỗi mạng không chặn việc đóng hướng dẫn; profile sẽ tự lưu lại ở phiên sau nếu cần.
+				void error;
+			}
+			saving = false;
+		}
+		helpOpen = false;
 	}
 </script>
 
@@ -43,6 +84,22 @@
 			</div>
 		</div>
 	</nav>
+
+	<!-- Nút trợ giúp (?) — mở lại hướng dẫn bất cứ lúc nào -->
+	<button
+		type="button"
+		onclick={() => {
+			persistOnClose = false;
+			helpOpen = true;
+		}}
+		aria-label="Mở hướng dẫn sử dụng"
+		disabled={saving}
+		class="fixed right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-line bg-white/90 text-sm font-bold text-ink shadow-sm backdrop-blur transition-transform active:scale-90 disabled:opacity-50"
+	>
+		?
+	</button>
+
+	<StepGuide open={helpOpen} onclose={closeGuide} />
 </div>
 
 {#snippet NavGlyph(opts: { name: string; active: boolean })}

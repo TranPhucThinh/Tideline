@@ -6,6 +6,7 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   default_limit numeric not null default 100000,
   day_start integer not null default 1 check (day_start between 1 and 31),
+  guide_seen boolean not null default false,
   created_at timestamptz not null default now()
 );
 
