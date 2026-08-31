@@ -5,6 +5,7 @@
 	import { formatMoney, parseMoneyInput } from '$lib/money';
 	import DateField from '$lib/DateField.svelte';
 	import Spinner from '$lib/Spinner.svelte';
+	import ConfirmDialog from '$lib/ConfirmDialog.svelte';
 
 	let { data } = $props();
 
@@ -125,15 +126,68 @@
 	}
 
 	let deletingId = $state<string | null>(null);
+	let savingId = $state<string | null>(null);
 
-	async function removeExpense(id: string) {
-		if (deletingId) return; // tránh spam click
+	// --- Xoá: dùng hộp thoại xác nhận ---
+	let confirmTarget = $state<ExpenseItem | null>(null);
+
+	function requestRemove(exp: ExpenseItem) {
+		confirmTarget = exp;
+	}
+
+	async function removeExpense() {
+		const id = confirmTarget?.id ?? null;
+		if (!id || deletingId) return;
 		deletingId = id;
 		const { error } = await supabase.from('expenses').delete().eq('id', id);
 		if (!error) {
 			cycleExpenses = cycleExpenses.filter((e) => e.id !== id);
+			confirmTarget = null;
 		}
 		deletingId = null;
+	}
+
+	// --- Sửa khoản chi (amount + note, giữ nguyên ngày) ---
+	let editingId = $state<string | null>(null);
+	let editAmount = $state('');
+	let editNote = $state('');
+	let editError = $state('');
+
+	function startEdit(exp: ExpenseItem) {
+		editingId = exp.id;
+		editAmount = String(exp.amount);
+		editNote = exp.note ?? '';
+		editError = '';
+	}
+
+	function cancelEdit() {
+		editingId = null;
+		editAmount = '';
+		editNote = '';
+		editError = '';
+	}
+
+	async function saveEdit(exp: ExpenseItem) {
+		editError = '';
+		const amount = parseMoneyInput(editAmount);
+		if (amount === null) {
+			editError = 'Nhập số tiền hợp lệ (số dương).';
+			return;
+		}
+		savingId = exp.id;
+		const { error } = await supabase
+			.from('expenses')
+			.update({ amount, note: editNote.trim() ? editNote.trim() : null })
+			.eq('id', exp.id);
+		if (error) {
+			editError = error.message;
+		} else {
+			cycleExpenses = cycleExpenses.map((e) =>
+				e.id === exp.id ? { ...e, amount, note: editNote.trim() ? editNote.trim() : null } : e
+			);
+			cancelEdit();
+		}
+		savingId = null;
 	}
 </script>
 
@@ -235,41 +289,131 @@
 	{:else}
 		<ul class="mt-3 space-y-2">
 			{#each selectedExpenses as exp (exp.id)}
+				{@const isEditing = editingId === exp.id}
 				<li
-					class="flex items-center justify-between gap-3 rounded-xl border border-line bg-white px-4 py-3"
+					class="rounded-xl border border-line bg-white px-4 py-3 {isEditing ? 'ring-2 ring-ink/20' : ''}"
 				>
-					<div class="min-w-0">
-						<p class="truncate text-sm">
-							{#if exp.note}
-								{exp.note}
-							{:else}
-								<span class="text-muted">Không ghi chú</span>
-							{/if}
-						</p>
-						<p class="font-display text-base font-semibold tabular-nums">
-							{formatMoney(exp.amount)}
-						</p>
-					</div>
-					<button
-						onclick={() => removeExpense(exp.id)}
-						aria-label="Xoá khoản chi"
-						disabled={deletingId === exp.id}
-						class="rounded-lg px-2 py-1 transition-colors {deletingId === exp.id ? 'cursor-wait opacity-60' : 'text-muted hover:bg-deficit-bg hover:text-deficit'}"
-					>
-						{#if deletingId === exp.id}
-							<Spinner color="deficit" size={18} />
-						{:else}
-							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M3 6h18" />
-								<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-								<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-								<path d="M10 11v6" />
-								<path d="M14 11v6" />
-							</svg>
+					{#if isEditing}
+						<!-- Form sửa khoản chi -->
+						{#if editError}
+							<p class="mb-2 rounded-lg bg-deficit-bg px-3 py-2 text-sm text-deficit">{editError}</p>
 						{/if}
-					</button>
+						<div>
+							<label for="edit-amount" class="text-sm font-medium text-muted">Số tiền (đ)</label>
+							<input
+								id="edit-amount"
+								type="text"
+								inputmode="numeric"
+								autocomplete="off"
+								placeholder="0"
+								bind:value={editAmount}
+								class="font-display mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2 text-lg font-semibold tabular-nums outline-none focus:border-ink"
+							/>
+						</div>
+						<div class="mt-2">
+							<label for="edit-note" class="text-sm font-medium text-muted">Ghi chú</label>
+							<input
+								id="edit-note"
+								type="text"
+								placeholder="Ví dụ: cà phê sáng"
+								bind:value={editNote}
+								class="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base outline-none focus:border-ink"
+							/>
+						</div>
+						<div class="mt-3 flex gap-2">
+							<button
+								type="button"
+								onclick={() => saveEdit(exp)}
+								disabled={savingId === exp.id}
+								class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-ink py-2.5 text-base font-semibold text-white disabled:opacity-50"
+							>
+								{#if savingId === exp.id}
+									<Spinner color="white" size={16} />
+									Đang lưu…
+								{:else}
+									Lưu
+								{/if}
+							</button>
+							<button
+								type="button"
+								onclick={cancelEdit}
+								disabled={savingId === exp.id}
+								class="flex-1 rounded-xl border border-line bg-cream py-2.5 text-base font-semibold text-ink disabled:opacity-50"
+							>
+								Huỷ
+							</button>
+						</div>
+					{:else}
+						<!-- Điều khiển: thông tin + nút sửa & xoá -->
+						<div class="flex items-center justify-between gap-3">
+							<button
+								type="button"
+								onclick={() => startEdit(exp)}
+								class="min-w-0 flex-1 text-left"
+								aria-label="Sửa khoản chi"
+							>
+								<p class="truncate text-sm">
+									{#if exp.note}
+										{exp.note}
+									{:else}
+										<span class="text-muted">Không ghi chú</span>
+									{/if}
+								</p>
+								<p class="font-display text-base font-semibold tabular-nums">
+									{formatMoney(exp.amount)}
+								</p>
+							</button>
+							<div class="flex shrink-0 items-center gap-1">
+								<button
+									type="button"
+									onclick={() => startEdit(exp)}
+									aria-label="Sửa khoản chi"
+									class="rounded-lg px-2 py-1 text-muted transition-colors hover:bg-cream hover:text-ink"
+								>
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+										<path d="m15 5 4 4" />
+									</svg>
+								</button>
+								<button
+									type="button"
+									onclick={() => requestRemove(exp)}
+									aria-label="Xoá khoản chi"
+									disabled={deletingId === exp.id}
+									class="rounded-lg px-2 py-1 transition-colors {deletingId === exp.id ? 'cursor-wait opacity-60' : 'text-muted hover:bg-deficit-bg hover:text-deficit'}"
+								>
+									{#if deletingId === exp.id}
+										<Spinner color="deficit" size={18} />
+									{:else}
+										<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+											<path d="M3 6h18" />
+											<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+											<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+											<path d="M10 11v6" />
+											<path d="M14 11v6" />
+										</svg>
+									{/if}
+								</button>
+							</div>
+						</div>
+					{/if}
 				</li>
 			{/each}
 		</ul>
 	{/if}
 </section>
+
+<!-- Hộp thoại xác nhận xoá -->
+<ConfirmDialog
+	open={confirmTarget !== null}
+	title="Xoá khoản chi?"
+	message={confirmTarget
+		? `Bạn có chắc muốn xoá khoản ${formatMoney(confirmTarget.amount)}${confirmTarget.note ? ` “${confirmTarget.note}”` : ''}? Thao tác này không thể hoàn tác.`
+		: ''}
+	confirmLabel="Xoá"
+	cancelLabel="Huỷ"
+	danger
+	busy={deletingId !== null}
+	onconfirm={removeExpense}
+	oncancel={() => (confirmTarget = null)}
+/>

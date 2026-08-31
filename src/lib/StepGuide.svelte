@@ -23,7 +23,7 @@
 		},
 		{
 			title: 'Thêm khoản chi',
-			body: 'Nhập số tiền (kèm ghi chú tuỳ ý, ví dụ “cà phê sáng”) rồi bấm “Thêm khoản chi”. Khoản chi mới xuất hiện ngay trong danh sách của ngày tương ứng và được dùng để tính số dư hôm nay.',
+			body: 'Nhập số tiền (kèm ghi chú tuỳ ý, ví dụ “cà phê sáng”) rồi bấm “Thêm khoản chi”. Nhấn vào một khoản chi để sửa lại số tiền/ghi chú hoặc xoá (có hỏi xác nhận trước khi xoá).',
 			icon: 'plus'
 		},
 		{
@@ -33,7 +33,7 @@
 		},
 		{
 			title: 'Thống kê',
-			body: 'Trang “Thống kê” tóm tắt tổng chi, số ngày tiết kiệm/vượt hạn mức, kèm biểu đồ để bạn nhìn nhanh xu hướng chi tiêu của cả vòng.',
+			body: 'Trang “Thống kê” tóm tắt tổng chi, số ngày tiết kiệm/vượt hạn mức. Phần biểu đồ cho phép xem theo ngày, tuần hoặc tháng để nhìn nhanh xu hướng chi tiêu của cả vòng.',
 			icon: 'stats'
 		},
 		{

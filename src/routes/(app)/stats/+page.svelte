@@ -6,7 +6,8 @@
 		prevCycle,
 		nextCycle,
 		todayKey,
-		type CycleBound
+		type CycleBound,
+		type CycleLedgerRow
 	} from '$lib/cycle';
 	import { formatMoney, formatSignedMoney } from '$lib/money';
 	import Chart from 'chart.js/auto';
@@ -37,6 +38,72 @@
 		{ id: 'balance', label: 'Số dư' },
 		{ id: 'spent', label: 'Đã chi' }
 	] as const;
+
+	// ---- Granularity cho biểu đồ: ngày / tuần / tháng ----
+	type Granularity = 'day' | 'week' | 'month';
+	let granularity = $state<Granularity>('day');
+	const granularities: { id: Granularity; label: string }[] = [
+		{ id: 'day', label: 'Theo ngày' },
+		{ id: 'week', label: 'Theo tuần' },
+		{ id: 'month', label: 'Theo tháng' }
+	];
+
+	/**
+	 * Gom các dòng ngày thành các nhóm (tuần/tháng) để vẽ biểu đồ.
+	 * Trả về labels (nhãn trục X), dateLabels (khoảng ngày cho tooltip) và các điểm dữ liệu.
+	 * - balance tại một nhóm = số dư của ngày cuối nhóm (trạng thái "cuối tuần/tháng").
+	 * - spent tại một nhóm = TỔNG các ngày trong nhóm.
+	 */
+	function aggregateForChart(
+		rs: CycleLedgerRow[],
+		gran: Granularity
+	): { labels: string[]; dateLabels: string[]; balance: number[]; spent: number[] } {
+		if (gran === 'day' || rs.length === 0) {
+			return {
+				labels: rs.map((r) => `N${r.cycleDay}`),
+				dateLabels: rs.map((r) => r.date),
+				balance: rs.map((r) => r.balance),
+				spent: rs.map((r) => r.spent)
+			};
+		}
+
+		const labels: string[] = [];
+		const dateLabels: string[] = [];
+		const balance: number[] = [];
+		const spent: number[] = [];
+
+		// chia theo tuần (7 ngày liên tiếp tính từ đầu vòng)
+		if (gran === 'week') {
+			const weekIndex = (cycleDay: number) => Math.floor((cycleDay - 1) / 7);
+			const totalWeeks = Math.max(1, Math.ceil(rs[rs.length - 1].cycleDay / 7));
+			for (let w = 0; w < totalWeeks; w++) {
+				const inWeek = rs.filter((r) => weekIndex(r.cycleDay) === w);
+				if (inWeek.length === 0) continue;
+				const sum = inWeek.reduce((s, r) => s + r.spent, 0);
+				labels.push(`Tuần ${w + 1}`);
+				dateLabels.push(inWeek[0].date);
+				balance.push(inWeek[inWeek.length - 1].balance);
+				spent.push(sum);
+			}
+		} else {
+			// gran === 'month': nhóm theo tháng dương lịch (YYYY-MM)
+			const byMonth = new Map<string, CycleLedgerRow[]>();
+			for (const r of rs) {
+				const key = r.date.slice(0, 7); // 'YYYY-MM'
+				if (!byMonth.has(key)) byMonth.set(key, []);
+				byMonth.get(key)!.push(r);
+			}
+			for (const [key, rows] of byMonth) {
+				const [, m] = key.split('-').map(Number);
+				labels.push(`Th ${m}`);
+				dateLabels.push(rows[0].date);
+				balance.push(rows[rows.length - 1].balance);
+				spent.push(rows.reduce((s, r) => s + r.spent, 0));
+			}
+		}
+
+		return { labels, dateLabels, balance, spent };
+	}
 
 	// ---- Summary metrics ----
 	const summary = $derived.by(() => {
@@ -93,10 +160,9 @@
 
 	$effect(() => {
 		if (view !== 'chart' || !canvas) return;
-		const labels = visibleRows.map((r) => `N${r.cycleDay}`);
-		const dateLabels = visibleRows.map((r) => r.date);
+		const { labels, dateLabels, balance, spent } = aggregateForChart(visibleRows, granularity);
 		const metric = chartMetric;
-		const values = visibleRows.map((r) => (metric === 'balance' ? r.balance : r.spent));
+		const values = metric === 'balance' ? balance : spent;
 
 		if (chart) chart.destroy();
 
@@ -225,15 +291,30 @@
 	{/if}
 {:else if view === 'chart'}
 	<div class="rounded-2xl border border-line bg-white p-4">
-		<div class="mb-3 flex items-center justify-between">
-			<h2 class="font-display text-base font-semibold">Biểu đồ hàng ngày</h2>
-			<div class="flex overflow-hidden rounded-lg border border-line">
-				{#each chartMetrics as m}
+		<div class="mb-3">
+			<div class="flex items-center justify-between">
+				<h2 class="font-display text-base font-semibold">
+					Biểu đồ {granularity === 'day' ? 'hàng ngày' : granularity === 'week' ? 'theo tuần' : 'theo tháng'}
+				</h2>
+				<div class="flex overflow-hidden rounded-lg border border-line">
+					{#each chartMetrics as m}
+						<button
+							onclick={() => (chartMetric = m.id)}
+							class="px-3 py-1.5 text-xs font-medium transition-colors {chartMetric === m.id ? 'bg-ink text-white' : 'bg-white text-muted'}"
+						>
+							{m.label}
+						</button>
+					{/each}
+				</div>
+			</div>
+			<!-- Bộ chọn mức gom (ngày / tuần / tháng) -->
+			<div class="mt-2 grid grid-cols-3 gap-1 rounded-xl border border-line bg-cream p-1">
+				{#each granularities as g}
 					<button
-						onclick={() => (chartMetric = m.id)}
-						class="px-3 py-1.5 text-xs font-medium transition-colors {chartMetric === m.id ? 'bg-ink text-white' : 'bg-white text-muted'}"
+						onclick={() => (granularity = g.id)}
+						class="rounded-lg py-1.5 text-xs font-medium transition-colors {granularity === g.id ? 'bg-ink text-white' : 'text-muted hover:text-ink'}"
 					>
-						{m.label}
+						{g.label}
 					</button>
 				{/each}
 			</div>
