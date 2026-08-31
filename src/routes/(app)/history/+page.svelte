@@ -8,11 +8,14 @@
 		type CycleBound
 	} from '$lib/cycle';
 	import { formatMoney, formatSignedMoney } from '$lib/money';
+	import { createLimitLookups } from '$lib/settings';
+	import type { LimitSetting } from '$lib/types';
 
 	let { data } = $props();
 
-	const defaultLimit = $derived((data.defaultLimit as number | undefined) ?? 100000);
-	const dayStart = $derived((data.dayStart as number | undefined) ?? 1);
+	const lookups = $derived(createLimitLookups((data.limitSettings as LimitSetting[] | undefined) ?? []));
+	const dayStartForDate = $derived(lookups.dayStartForDate);
+	const defaultLimitForDate = $derived(lookups.defaultLimitForDate);
 	const bound: CycleBound = $derived(data.bound);
 	const isCurrent = $derived(data.isCurrent);
 
@@ -21,7 +24,7 @@
 		for (const e of data.cycleExpenses) {
 			spentByDate[e.date] = (spentByDate[e.date] ?? 0) + e.amount;
 		}
-		return computeCycleLedger(bound, defaultLimit, spentByDate);
+		return computeCycleLedger(bound, defaultLimitForDate, spentByDate);
 	});
 
 	// Nếu là vòng hiện tại, chỉ hiển thị tới ngày hôm nay
@@ -31,7 +34,7 @@
 	const totalSpent = $derived(visibleRows.reduce((s, r) => s + r.spent, 0));
 
 	function goCycle(delta: number) {
-		const target = delta < 0 ? prevCycle(bound, dayStart) : nextCycle(bound, dayStart);
+		const target = delta < 0 ? prevCycle(bound, dayStartForDate) : nextCycle(bound, dayStartForDate);
 		goto(`/history?start=${target.start}`, {
 			replaceState: false,
 			invalidateAll: true

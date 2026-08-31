@@ -10,12 +10,15 @@
 		type CycleLedgerRow
 	} from '$lib/cycle';
 	import { formatMoney, formatSignedMoney } from '$lib/money';
+	import { createLimitLookups } from '$lib/settings';
+	import type { LimitSetting } from '$lib/types';
 	import Chart from 'chart.js/auto';
 
 	let { data } = $props();
 
-	const defaultLimit = $derived((data.defaultLimit as number | undefined) ?? 100000);
-	const dayStart = $derived((data.dayStart as number | undefined) ?? 1);
+	const lookups = $derived(createLimitLookups((data.limitSettings as LimitSetting[] | undefined) ?? []));
+	const dayStartForDate = $derived(lookups.dayStartForDate);
+	const defaultLimitForDate = $derived(lookups.defaultLimitForDate);
 	const bound: CycleBound = $derived(data.bound);
 	const isCurrent = $derived(data.isCurrent);
 
@@ -24,7 +27,7 @@
 		for (const e of data.cycleExpenses) {
 			spentByDate[e.date] = (spentByDate[e.date] ?? 0) + e.amount;
 		}
-		return computeCycleLedger(bound, defaultLimit, spentByDate);
+		return computeCycleLedger(bound, defaultLimitForDate, spentByDate);
 	});
 
 	const today = $derived(todayKey());
@@ -147,7 +150,7 @@
 	);
 
 	function goCycle(delta: number) {
-		const target = delta < 0 ? prevCycle(bound, dayStart) : nextCycle(bound, dayStart);
+		const target = delta < 0 ? prevCycle(bound, dayStartForDate) : nextCycle(bound, dayStartForDate);
 		goto(`/stats?start=${target.start}`, {
 			replaceState: false,
 			invalidateAll: true

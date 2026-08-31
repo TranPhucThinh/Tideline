@@ -1,9 +1,10 @@
 import { computeMonthLedger, addMonths, monthIsAfter, monthKeyToString, parseMonthKey } from '../src/lib/ledger.ts';
 import { formatMoney, formatSignedMoney, parseMoneyInput } from '../src/lib/money.ts';
+import { createLimitLookups } from '../src/lib/settings.ts';
 
 // ---- Ví dụ spec mục 3 ----
 const spentByDate = { '2023-02-01': 90000, '2023-02-02': 160000, '2023-02-03': 30000 };
-const rows = computeMonthLedger({ year: 2023, month: 2, defaultLimit: 100000, spentByDate });
+const rows = computeMonthLedger({ year: 2023, month: 2, defaultLimitForDate: () => 100000, spentByDate });
 const row = (d) => rows.find((r) => r.day === d);
 let fail = 0;
 const checks = [
@@ -15,11 +16,11 @@ const checks = [
 for (const [n, got, want] of checks) { const ok = got === want; if (!ok) fail++; console.log(`${ok ? 'PASS' : 'FAIL'} ${n}: ${got} / ${want}`); }
 
 // ---- Reset ngày 1 tháng mới ----
-const febRows = computeMonthLedger({ year: 2023, month: 2, defaultLimit: 100000, spentByDate: {} });
+const febRows = computeMonthLedger({ year: 2023, month: 2, defaultLimitForDate: () => 100000, spentByDate: {} });
 // tháng mới reset: ngày 1 limit = defaultLimit bất kể số dư hôm trước là gì
 const febEndBalance = febRows[febRows.length - 1].balance; // hôm nay là last ngày
 // Mô phỏng: ngày 1 tháng 3 tới phải reset về 100000, không cộng dồn
-const marRows = computeMonthLedger({ year: 2023, month: 3, defaultLimit: 100000, spentByDate: {} });
+const marRows = computeMonthLedger({ year: 2023, month: 3, defaultLimitForDate: () => 100000, spentByDate: {} });
 const resetOk = marRows[0].limit === 100000;
 if (!resetOk) fail++;
 console.log(`${resetOk ? 'PASS' : 'FAIL'} Reset tháng mới: ngày 1 limit = 100000 (không cộng dồn từ tháng trước, balance tháng trước cuối = ${febEndBalance})`);
@@ -62,6 +63,25 @@ console.log(`${okP0 ? 'PASS' : 'FAIL'} parseMoneyInput chặn 0/âm`);
 const pNeg = parseMoneyInput('-5'); const okNeg = pNeg === null;
 if (!okNeg) fail++;
 console.log(`${okNeg ? 'PASS' : 'FAIL'} parseMoneyInput chặn âm`);
+
+// ---- NON-RETROACTIVE: đổi default_limit giữa tháng ----
+// default 100k từ đầu tháng 2; đổi lên 150k có hiệu lực từ 2023-02-05.
+const nrSettings = [
+  { id: 'a', default_limit: 100000, day_start: 1, effective_from: '2023-02-01', created_at: '2023-02-01T00:00:00Z' },
+  { id: 'b', default_limit: 150000, day_start: 1, effective_from: '2023-02-05', created_at: '2023-02-05T00:00:00Z' }
+];
+const { defaultLimitForDate } = createLimitLookups(nrSettings);
+const nrRows = computeMonthLedger({ year: 2023, month: 2, defaultLimitForDate, spentByDate: {} });
+const nr = (d) => nrRows.find(r => r.day === d);
+// Không chi tiêu: balance = limit.
+// day4 (trước ngày đổi 05/02): base 100k -> limit = 100k + balance(day3) = 400k
+const nrDay4Ok = nr(4).limit === 400000;
+if (!nrDay4Ok) fail++;
+console.log(`${nrDay4Ok ? 'PASS' : 'FAIL'} non-retroactive: ngày 04/02 trước khi đổi giữ nguyên limit 400000 (100k) — got ${nr(4).limit}`);
+// day5 (từ ngày đổi 05/02): base mới 150k -> limit = 150k + balance(day4) = 150000 + 400000 = 550000
+const nrDay5Ok = nr(5).limit === 550000;
+if (!nrDay5Ok) fail++;
+console.log(`${nrDay5Ok ? 'PASS' : 'FAIL'} non-retroactive: ngày 05/02 từ ngày đổi dùng default mới 150k -> limit 550000 — got ${nr(5).limit}`);
 
 console.log(fail === 0 ? '\nALL PASS' : `\n${fail} FAILED`);
 process.exit(fail === 0 ? 0 : 1);

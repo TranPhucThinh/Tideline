@@ -9,6 +9,13 @@
 
 import { daysInMonth, toDateKey } from './ledger.ts';
 
+/**
+ * Kiểu hàm tra cứu ngày bắt đầu vòng theo 1 ngày. Thay vì nhận một `dayStart: number`
+ * cố định, chương trình dùng hàm này để tra cứu giá trị `day_start` có hiệu lực tại từng
+ * ngày (từ lịch sử `limit_settings`). Hoá ra yêu cầu non-retroactive cho ranh giới vòng.
+ */
+export type DayStartLookup = (date: string) => number;
+
 export interface CycleBound {
 	start: string; // 'YYYY-MM-DD' — ngày reset của vòng
 	end: string; // 'YYYY-MM-DD' — ngày cuối của vòng (bao gồm)
@@ -20,10 +27,33 @@ export function cycleStartDayOfMonth(year: number, month: number, dayStart: numb
 }
 
 /**
+ * Ngày reset của tháng (Y,M) dựa trên `day_start` CÓ HIỆU LỰC tại tháng đó.
+ *
+ * LƯU Ý (quyết định option "a" — an toàn, không làm xáo trộn dữ liệu đang xem):
+ * ta lấy `day_start` có hiệu lực tại NGÀY MỒNG 1 của tháng làm neo cho ranh giới vòng
+ * của tháng đó. Hệ quả khi user đổi `day_start` GIỮA vòng đang chạy:
+ *   - Vòng đang chạy (bắt đầu trước ngày đổi) GIỮ NGUYÊN ranh giới cũ, vì ngày mồng 1
+ *     của tháng chứa vòng đó vẫn ánh xạ sang giá trị cũ -> đúng option (a).
+ *   - Giá trị `day_start` mới chỉ bắt đầu ảnh hưởng từ vòng kế tiếp mà ngày mồng 1 của
+ *     tháng của nó đã chuyển sang giá trị mới.
+ * Không chọn option (b) (đổi ranh giới ngay lập tức, cắt ngắn/kéo dài vòng hiện tại) vì
+ * khó hiểu với user và dễ sai lệch dữ liệu.
+ */
+function cycleStartDayOfMonthFor(dayStartForDate: DayStartLookup, year: number, month: number): number {
+	const anchor = toDateKey(year, month, 1);
+	return cycleStartDayOfMonth(year, month, dayStartForDate(anchor));
+}
+
+/**
  * Xác định vòng chứa ngày `date` (YYYY-MM-DD).
  * Vòng bắt đầu tại thời điểm "ngày reset" gần nhất (≤ date) trong chuỗi các tháng.
+ * `dayStartForDate` dùng để tra cứu `day_start` có hiệu lực tại từng tháng (xem
+ * `cycleStartDayOfMonthFor`).
  */
-export function cycleOf(date: string, dayStart: number): CycleBound {
+export function cycleOf(date: string, dayStartForDate: DayStartLookup): CycleBound {
+	// Hỗ trợ gọi trực tiếp với 1 số (từ code cũ/test): bọc thành hàm hằng.
+	const lookup =
+		typeof dayStartForDate === 'number' ? () => dayStartForDate : dayStartForDate;
 	const [y, m, d] = date.split('-').map(Number);
 	// Bước lùi dần sang các tháng trước để tìm ngày reset ≤ date.
 	let cy = y;
@@ -33,7 +63,7 @@ export function cycleOf(date: string, dayStart: number): CycleBound {
 	let iterations = 0;
 	while (iterations < 72) {
 		// Nếu tháng cm trước đó
-		const sd = cycleStartDayOfMonth(cy, cm, dayStart);
+		const sd = cycleStartDayOfMonthFor(lookup, cy, cm);
 		const candidate = toDateKey(cy, cm, sd);
 		if (candidate <= date) {
 			start = candidate;
@@ -51,13 +81,13 @@ export function cycleOf(date: string, dayStart: number): CycleBound {
 	// Dự phòng: nếu không tìm được (không nên xảy ra), dùng ngày đó làm start.
 	const cycleStart = start ?? date;
 	// end = ngày trước ngày reset của vòng kế tiếp
-	const next = nextCycleStart(cycleStart, dayStart);
+	const next = nextCycleStart(cycleStart, lookup);
 	const end = shiftDays(next, -1);
 	return { start: cycleStart, end };
 }
 
 /** Tính ngày reset của vòng kế tiếp sau `cycleStart`. */
-function nextCycleStart(cycleStart: string, dayStart: number): string {
+function nextCycleStart(cycleStart: string, dayStartForDate: DayStartLookup): string {
 	const [y, m, d] = cycleStart.split('-').map(Number);
 	// vòng kế tiếp nằm ở tháng sau
 	let ny = y;
@@ -66,7 +96,7 @@ function nextCycleStart(cycleStart: string, dayStart: number): string {
 		nm = 1;
 		ny += 1;
 	}
-	const sd = cycleStartDayOfMonth(ny, nm, dayStart);
+	const sd = cycleStartDayOfMonthFor(dayStartForDate, ny, nm);
 	return toDateKey(ny, nm, sd);
 }
 
@@ -78,13 +108,13 @@ export function shiftDays(date: string, n: number): string {
 }
 
 /** Vòng tiếp theo / vòng trước của một vòng. */
-export function prevCycle(bound: CycleBound, dayStart: number): CycleBound {
+export function prevCycle(bound: CycleBound, dayStartForDate: DayStartLookup): CycleBound {
 	const [y, m, d] = bound.start.split('-').map(Number);
 	// vòng trước = vòng chứa ngày trước ngày start hiện tại
-	return cycleOf(shiftDays(bound.start, -1), dayStart);
+	return cycleOf(shiftDays(bound.start, -1), dayStartForDate);
 }
-export function nextCycle(bound: CycleBound, dayStart: number): CycleBound {
-	return cycleOf(shiftDays(bound.end, 1), dayStart);
+export function nextCycle(bound: CycleBound, dayStartForDate: DayStartLookup): CycleBound {
+	return cycleOf(shiftDays(bound.end, 1), dayStartForDate);
 }
 
 export interface CycleLedgerRow {
@@ -97,14 +127,29 @@ export interface CycleLedgerRow {
 }
 
 /**
+ * Kiểu hàm tra cứu `default_limit` theo TỪNG ngày (từ lịch sử `limit_settings`). Đây là
+ * phần cốt lõi của fix non-retroactive: thay hằng số `defaultLimit` bằng hàm này ở từng
+ * bước lặp, để các ngày TRƯỚC ngày đổi giữ nguyên hạn mức cũ, từ ngày đổi trở đi dùng
+ * giá trị mới.
+ */
+export type DefaultLimitLookup = (date: string) => number;
+
+/**
  * Tính ledger đầy đủ cho 1 vòng, tuần tự từ start đến end (một lần).
- * Reset tại ngày start: limit = defaultLimit; các ngày sau = defaultLimit + balance(trước).
+ * Reset tại ngày start: limit = defaultLimitForDate(start);
+ * các ngày sau = defaultLimitForDate(cur) + balance(trước).
+ *
+ * NON-RETROACTIVE: vì mỗi ngày tra cứu `default_limit` riêng theo ngày đó, nếu user đổi
+ * `default_limit` giữa vòng thì: ngày trước ngày đổi &rarr; giá trị cũ; từ ngày đổi
+ * trở đi &rarr; giá trị mới (do balance của các ngày sau mang theo phần lệch).
  */
 export function computeCycleLedger(
 	bound: CycleBound,
-	defaultLimit: number,
+	defaultLimitForDate: DefaultLimitLookup,
 	spentByDate: Record<string, number>
 ): CycleLedgerRow[] {
+	const lookup =
+		typeof defaultLimitForDate === 'number' ? () => defaultLimitForDate : defaultLimitForDate;
 	const rows: CycleLedgerRow[] = [];
 	let cur = bound.start;
 	let cycleDay = 1;
@@ -112,7 +157,8 @@ export function computeCycleLedger(
 
 	while (cur <= bound.end) {
 		const [ty, tm, td] = cur.split('-').map(Number);
-		const limit = cycleDay === 1 ? defaultLimit : defaultLimit + previousBalance;
+		const base = lookup(cur);
+		const limit = cycleDay === 1 ? base : base + previousBalance;
 		const spent = spentByDate[cur] ?? 0;
 		const balance = limit - spent;
 		rows.push({
@@ -137,8 +183,8 @@ export function todayKey(): string {
 }
 
 /** Vòng hiện tại (chứa hôm nay) theo giờ local. */
-export function currentCycle(dayStart: number): CycleBound {
-	return cycleOf(todayKey(), dayStart);
+export function currentCycle(dayStartForDate: DayStartLookup): CycleBound {
+	return cycleOf(todayKey(), dayStartForDate);
 }
 
 function currentDateKey(): string {

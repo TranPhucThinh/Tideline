@@ -7,6 +7,8 @@
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   default_limit numeric not null default 100000,
+  day_start integer not null default 1 check (day_start between 1 and 31),
+  guide_seen boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -20,9 +22,23 @@ create table if not exists public.expenses (
   created_at timestamptz not null default now()
 );
 
+-- 2b. Bảng limit_settings (lịch sử đổi hạn mức / ngày bắt đầu vòng, append-only)
+create table if not exists public.limit_settings (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  default_limit numeric not null,
+  day_start integer not null check (day_start between 1 and 31),
+  effective_from date not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists limit_settings_user_effective_idx
+  on public.limit_settings (user_id, effective_from);
+
 -- 3. Bật RLS
 alter table public.profiles enable row level security;
 alter table public.expenses enable row level security;
+alter table public.limit_settings enable row level security;
 
 -- 4. Chính sách RLS
 create policy "profiles select own" on public.profiles
@@ -37,12 +53,27 @@ create policy "expenses select own" on public.expenses
 create policy "expenses delete own" on public.expenses
   for delete using ((select auth.uid()) = user_id);
 
--- 5. Tự tạo profile khi có user mới đăng ký
+create policy "limit_settings insert own" on public.limit_settings
+  for insert with check ((select auth.uid()) = user_id);
+create policy "limit_settings select own" on public.limit_settings
+  for select using ((select auth.uid()) = user_id);
+create policy "limit_settings update own" on public.limit_settings
+  for update using ((select auth.uid()) = user_id);
+create policy "limit_settings delete own" on public.limit_settings
+  for delete using ((select auth.uid()) = user_id);
+
+-- 5. Tự tạo profile + 1 row limit_settings khi có user mới đăng ký
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
   insert into public.profiles (id, default_limit)
-  values (new.id, 100000);
+  values (new.id, 100000)
+  on conflict (id) do nothing;
+
+  insert into public.limit_settings (user_id, default_limit, day_start, effective_from)
+  values (new.id, 100000, 1, now()::date)
+  on conflict do nothing;
+
   return new;
 end;
 $$;

@@ -18,3 +18,20 @@ export interface Expense {
 	date: string; // 'YYYY-MM-DD'
 	created_at: string;
 }
+
+/**
+ * Một dòng trong bảng `limit_settings` — lịch sử thay đổi cài đặt hạn mức / ngày bắt
+ * đầu vòng (append-only, xem migration 003). Giá trị `default_limit`/`day_start` được
+ * áp dụng cho các ngày từ `effective_from` (bao gồm) cho đến trước `effective_from`
+ * của dòng kế tiếp (hoặc mãi mãi nếu là dòng mới nhất).
+ */
+export interface LimitSetting {
+	id: string;
+	user_id: string;
+	default_limit: number;
+	/** Ngày bắt đầu vòng áp dụng từ effective_from (1..31). */
+	day_start: number;
+	/** Ngày giá trị bắt đầu có hiệu lực (YYYY-MM-DD). */
+	effective_from: string;
+	created_at: string;
+}

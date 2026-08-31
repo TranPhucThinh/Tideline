@@ -1,5 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { cycleOf, type CycleBound } from '$lib/cycle';
+import { createLimitLookups } from '$lib/settings';
+import type { LimitSetting } from '$lib/types';
 
 // Hỗ trợ ?start=YYYY-MM-DD (ngày bắt đầu vòng). Mặc định = vòng hiện tại.
 function parseStart(raw: string | null): string | null {
@@ -9,17 +11,23 @@ function parseStart(raw: string | null): string | null {
 }
 
 export const load: PageServerLoad = async ({ url, locals, parent }) => {
-	const { dayStart } = await parent();
+	const { limitSettings } = await parent();
+	const { dayStartForDate } = createLimitLookups(limitSettings ?? []);
 
 	if (!locals.supabase || !locals.supabaseReady) {
 		const today = toDateKey(new Date());
-		return { bound: cycleOf(today, dayStart), cycleExpenses: [], dayStart, isCurrent: false };
+		return {
+			bound: cycleOf(today, dayStartForDate),
+			cycleExpenses: [],
+			limitSettings: limitSettings ?? [],
+			isCurrent: false
+		};
 	}
 
-	const cur = cycleOf(toDateKey(new Date()), dayStart);
+	const cur = cycleOf(toDateKey(new Date()), dayStartForDate);
 	const raw = url.searchParams.get('start');
 	const start = parseStart(raw);
-	const bound: CycleBound = start ? cycleOf(start, dayStart) : cur;
+	const bound: CycleBound = start ? cycleOf(start, dayStartForDate) : cur;
 	const isCurrent = bound.start === cur.start;
 
 	const { data, error } = await locals.supabase
@@ -32,7 +40,7 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 	if (error) {
 		// eslint-disable-next-line no-console
 		console.error('load history cycle:', error.message);
-		return { bound, cycleExpenses: [], dayStart, isCurrent };
+		return { bound, cycleExpenses: [], limitSettings: limitSettings ?? [], isCurrent };
 	}
 
 	return {
@@ -45,7 +53,7 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 			date: string;
 			created_at: string;
 		}>,
-		dayStart,
+		limitSettings: (limitSettings ?? []) as LimitSetting[],
 		isCurrent
 	};
 };

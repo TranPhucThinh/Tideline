@@ -2,6 +2,8 @@
 	import { createClient } from '$lib/supabaseClient';
 	import { todayKey } from '$lib/ledger';
 	import { currentCycle, computeCycleLedger, type CycleBound } from '$lib/cycle';
+	import { createLimitLookups } from '$lib/settings';
+	import type { LimitSetting } from '$lib/types';
 	import { formatMoney, parseMoneyInput } from '$lib/money';
 	import DateField from '$lib/DateField.svelte';
 	import Spinner from '$lib/Spinner.svelte';
@@ -20,8 +22,10 @@
 		created_at: string;
 	};
 
-	const dayStart = $derived((data.dayStart as number | undefined) ?? 1);
-	const defaultLimit = $derived((data.defaultLimit as number | undefined) ?? 100000);
+	// Tra cứu cài đặt theo TỪNG NGÀY từ lịch sử limit_settings (non-retroactive).
+	const lookups = $derived(createLimitLookups((data.limitSettings as LimitSetting[] | undefined) ?? []));
+	const dayStartForDate = $derived(lookups.dayStartForDate);
+	const defaultLimitForDate = $derived(lookups.defaultLimitForDate);
 
 	// Toàn bộ chi tiêu trong vòng hiện tại — nguồn sự thật duy nhất để tính ledger.
 	let cycleExpenses = $state<ExpenseItem[]>(data.cycleExpenses);
@@ -34,20 +38,21 @@
 	let submitting = $state(false);
 	let formError = $state('');
 
-	// Vòng hiện tại + tính ledger cả vòng (một lần) mỗi khi dữ liệu/defaultLimit/start đổi.
-	const bound = $derived(currentCycle(dayStart));
+	// Vòng hiện tại + tính ledger cả vòng (một lần) mỗi khi dữ liệu/cài đặt đổi.
+	// day_start tra theo ngày → vòng đang chạy giữ nguyên ranh giới cũ (option a).
+	const bound = $derived(currentCycle(dayStartForDate));
 	const rows = $derived.by(() => {
 		const spentByDate: Record<string, number> = {};
 		for (const e of cycleExpenses) {
 			spentByDate[e.date] = (spentByDate[e.date] ?? 0) + e.amount;
 		}
-		return computeCycleLedger(bound, defaultLimit, spentByDate);
+		return computeCycleLedger(bound, defaultLimitForDate, spentByDate);
 	});
 
 	const today = $derived(todayKey());
 	const todayRow = $derived(rows.find((r) => r.date === today) ?? null);
 	const balance = $derived(todayRow?.balance ?? 0);
-	const limitToday = $derived(todayRow?.limit ?? defaultLimit);
+	const limitToday = $derived(todayRow?.limit ?? defaultLimitForDate(today));
 	const spentToday = $derived(todayRow?.spent ?? 0);
 	const isSurplus = $derived(balance >= 0);
 

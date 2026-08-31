@@ -1,16 +1,19 @@
 import type { PageServerLoad } from './$types';
 import { currentCycle } from '$lib/cycle';
+import { createLimitLookups } from '$lib/settings';
+import type { LimitSetting } from '$lib/types';
 
 export const load: PageServerLoad = async ({ locals, parent }) => {
-	// dayStart từ layout (profile). Layout tự chuyển về nếu profile chưa có.
-	const { dayStart } = await parent();
+	// limitSettings từ layout (profile + lịch sử bảng limit_settings, migration 003).
+	const { limitSettings } = await parent();
+	const { dayStartForDate } = createLimitLookups(limitSettings ?? []);
 
 	if (!locals.supabase || !locals.supabaseReady) {
-		return { cycleExpenses: [], dayStart };
+		return { cycleExpenses: [], limitSettings: limitSettings ?? [] };
 	}
 
-	// Vòng hiện tại (chứa hôm nay)
-	const bound = currentCycle(dayStart);
+	// Vòng hiện tại (chứa hôm nay) — dùng day_start tra theo từng ngày (non-retroactive).
+	const bound = currentCycle(dayStartForDate);
 
 	const { data, error } = await locals.supabase
 		.from('expenses')
@@ -22,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 	if (error) {
 		// eslint-disable-next-line no-console
 		console.error('load cycle expenses:', error.message);
-		return { cycleExpenses: [], dayStart };
+		return { cycleExpenses: [], limitSettings: limitSettings ?? [] };
 	}
 
 	return {
@@ -34,6 +37,6 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 			date: string;
 			created_at: string;
 		}>,
-		dayStart
+		limitSettings: (limitSettings ?? []) as LimitSetting[]
 	};
 };

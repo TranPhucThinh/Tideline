@@ -1,8 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { cycleOf, type CycleBound } from '$lib/cycle';
+import { createLimitLookups } from '$lib/settings';
+import type { LimitSetting } from '$lib/types';
 
 export const load: PageServerLoad = async ({ url, locals, parent }) => {
-	const { dayStart } = await parent();
+	const { limitSettings } = await parent();
+	const { dayStartForDate } = createLimitLookups(limitSettings ?? []);
 
 	const todayKey = (d: Date) => {
 		const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -11,13 +14,18 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 	};
 
 	if (!locals.supabase || !locals.supabaseReady) {
-		return { bound: cycleOf(todayKey(new Date()), dayStart), cycleExpenses: [], dayStart, isCurrent: false };
+		return {
+			bound: cycleOf(todayKey(new Date()), dayStartForDate),
+			cycleExpenses: [],
+			limitSettings: limitSettings ?? [],
+			isCurrent: false
+		};
 	}
 
-	const cur = cycleOf(todayKey(new Date()), dayStart);
+	const cur = cycleOf(todayKey(new Date()), dayStartForDate);
 	const raw = url.searchParams.get('start');
 	const start = raw && /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : null;
-	const bound: CycleBound = start ? cycleOf(start, dayStart) : cur;
+	const bound: CycleBound = start ? cycleOf(start, dayStartForDate) : cur;
 	const isCurrent = bound.start === cur.start;
 
 	const { data, error } = await locals.supabase
@@ -30,7 +38,7 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 	if (error) {
 		// eslint-disable-next-line no-console
 		console.error('load stats cycle:', error.message);
-		return { bound, cycleExpenses: [], dayStart, isCurrent };
+		return { bound, cycleExpenses: [], limitSettings: limitSettings ?? [], isCurrent };
 	}
 
 	return {
@@ -43,7 +51,7 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 			date: string;
 			created_at: string;
 		}>,
-		dayStart,
+		limitSettings: (limitSettings ?? []) as LimitSetting[],
 		isCurrent
 	};
 };

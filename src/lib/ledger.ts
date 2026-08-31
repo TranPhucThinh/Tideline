@@ -88,7 +88,12 @@ export function monthIsAfter(a: MonthKey, b: MonthKey): boolean {
 export interface LedgerInput {
 	year: number;
 	month: number;
-	defaultLimit: number;
+	/**
+	 * Hàm tra cứu default_limit theo TỪNG NGÀY (non-retroactive). Với vòng = tháng dương
+	 * lịch (dayStart=1), mỗi ngày tra cứu giá trị có hiệu lực tại chính ngày đó, nên ngày
+	 * trước ngày đổi giữ nguyên hạn mức cũ, từ ngày đổi dùng giá trị mới. Xem `settings.ts`.
+	 */
+	defaultLimitForDate: (date: string) => number;
 	/** map dateKey -> tổng chi tiêu ngày đó (số dương). Có thể chứa cả ngày ngoài tháng; sẽ bỏ qua. */
 	spentByDate: Record<string, number>;
 }
@@ -97,20 +102,21 @@ export interface LedgerInput {
  * Tính toàn bộ ledger cho 1 tháng, tuần tự từ ngày 1 đến hết tháng (một lần duy nhất bằng reduce/vòng lặp).
  *
  * Quy tắc:
- *  - Ngày 1: limit = defaultLimit
- *  - Ngày N>1: limit = defaultLimit + balance(N-1)
+ *  - Ngày 1: limit = defaultLimitForDate(ngày 1)
+ *  - Ngày N>1: limit = defaultLimitForDate(ngày N) + balance(N-1)
  *  - balance = limit - spent
  */
 export function computeMonthLedger(input: LedgerInput): LedgerRow[] {
-	const { year, month, defaultLimit, spentByDate } = input;
+	const { year, month, defaultLimitForDate, spentByDate } = input;
 	const rows: LedgerRow[] = [];
 	const nDays = daysInMonth(year, month);
 	let previousBalance = 0;
 
 	for (let day = 1; day <= nDays; day++) {
 		const date = toDateKey(year, month, day);
+		const base = defaultLimitForDate(date);
 		const limit =
-			day === 1 ? defaultLimit : defaultLimit + previousBalance;
+			day === 1 ? base : base + previousBalance;
 		const spent = spentByDate[date] ?? 0;
 		const balance = limit - spent;
 		rows.push({ date, day, month, year, limit, spent, balance });
