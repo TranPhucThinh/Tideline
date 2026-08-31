@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+/* Design tokens từ spec mục 6 */
+@theme {
+	/* Màu gốc */
+	--color-cream: #f7f5f1; /* nền be ấm */
+	--color-ink: #16302b; /* chữ chính xanh thông đậm */
+
+	/* Surplus (còn lại / dương) */
+	--color-surplus: #2f7a5e;
+	--color-surplus-bg: #e4efe9;
+
+	/* Deficit (vượt hạn mức / âm) */
+	--color-deficit: #c1553d;
+	--color-deficit-bg: #f7e7e2;
+
+	/* Neutrals */
+	--color-muted: #6b7872;
+	--color-line: #e2ddd5;
+
+	/* Fonts */
+	--font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+	--font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+	scrollbar-gutter: stable;
+}
+
+body {
+	margin: 0;
+	background-color: var(--color-cream);
+	color: var(--color-ink);
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+.font-display {
+	font-family: var(--font-display);
+	letter-spacing: -0.01em;
+}
