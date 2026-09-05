@@ -46,6 +46,26 @@ T('cycle ngày3 limit 50000', row('2026-07-23').limit === 50000);
 T('cycle ngày3 balance +20000', row('2026-07-23').balance === 20000);
 T('cycle ngày4 limit 120000', row('2026-07-24').limit === 120000);
 
+// ---- Khoản thu (income): cộng vào số dư và mang du sang ngày kế tiếp ----
+// Vòng 21/7 -> 20/8, defaultLimit=100000. Ngày21 nhân lương 500000; ngày22 chi 160000.
+const incomeSpent = { '2026-07-22': 160000 };
+const incomeRows = computeCycleLedger(
+  { start: '2026-07-21', end: '2026-08-20' },
+  constLimit(100000),
+  incomeSpent,
+  { '2026-07-21': 500000 }
+);
+const irow = (d) => incomeRows.find((r) => r.date === d);
+// Ngày 21: balance = limit - spent + income = 100000 - 0 + 500000 = 600000
+T('income: ngày1 income +500000', irow('2026-07-21').income === 500000);
+T('income: ngày1 balance = 100k + 500k = 600000', irow('2026-07-21').balance === 600000);
+// Ngày 22: limit = default + balance(21) = 100k + 600k = 700000
+T('income: ngày2 limit = 100k + 600k = 700000 (khoản thu mang du sang sang ngày sau)', irow('2026-07-22').limit === 700000);
+// Ngày 22: balance = 700000 - 160000 + 0 = 540000
+T('income: ngày2 balance = 700k - 160k = 540000', irow('2026-07-22').balance === 540000);
+// Ngày 23 (không chi/thu): balance = limit = 100k + 540k = 640000
+T('income: ngày3 balance 640000 (balance mang du tiếp)', irow('2026-07-23').balance === 640000);
+
 // ---- NON-RETROACTIVE: đổi default_limit giữa vòng ----
 // Vòng 21/7 -> 20/8. default 100k từ 01/7; đổi lên 150k có hiệu lực từ 2026-07-25.
 const nrSettings = [

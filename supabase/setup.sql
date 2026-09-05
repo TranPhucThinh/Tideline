@@ -22,6 +22,19 @@ create table if not exists public.expenses (
 
 create index if not exists expenses_user_date_idx on public.expenses (user_id, date);
 
+-- 2a. Bảng incomes (các khoản thu — tiền user NHĀN, vd lương). Khoản thu được cộng
+-- vào số dư hằng ngày: balance = limit - spent + income (xem app/src/lib/ledger.ts).
+create table if not exists public.incomes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  amount numeric not null check (amount > 0),
+  note text,
+  date date not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists incomes_user_date_idx on public.incomes (user_id, date);
+
 -- 2b. Bảng limit_settings: LỊCH SỬ đổi cài đặt hạn mức / ngày bắt đầu vòng (append-only).
 -- Mỗi lần user đổi -> INSERT 1 row mới với effective_from = ngày đổi. Khi tính ledger, tra
 -- cứu giá trị theo TỪNG NGÀY (giá trị có effective_from <= ngày đó gần nhất) để cài đặt mới
@@ -42,6 +55,7 @@ create index if not exists limit_settings_user_effective_idx
 -- 3. Bật Row Level Security
 alter table public.profiles enable row level security;
 alter table public.expenses enable row level security;
+alter table public.incomes enable row level security;
 alter table public.limit_settings enable row level security;
 
 -- 4. Chính sách RLS: mỗi user chỉ truy cập dữ liệu của chính mình
@@ -63,6 +77,22 @@ create policy "expenses select own" on public.expenses
 
 drop policy if exists "expenses delete own" on public.expenses;
 create policy "expenses delete own" on public.expenses
+  for delete using ((select auth.uid()) = user_id);
+
+drop policy if exists "incomes insert own" on public.incomes;
+create policy "incomes insert own" on public.incomes
+  for insert with check ((select auth.uid()) = user_id);
+
+drop policy if exists "incomes select own" on public.incomes;
+create policy "incomes select own" on public.incomes
+  for select using ((select auth.uid()) = user_id);
+
+drop policy if exists "incomes update own" on public.incomes;
+create policy "incomes update own" on public.incomes
+  for update using ((select auth.uid()) = user_id);
+
+drop policy if exists "incomes delete own" on public.incomes;
+create policy "incomes delete own" on public.incomes
   for delete using ((select auth.uid()) = user_id);
 
 drop policy if exists "limit_settings insert own" on public.limit_settings;

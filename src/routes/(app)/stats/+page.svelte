@@ -27,7 +27,11 @@
 		for (const e of data.cycleExpenses) {
 			spentByDate[e.date] = (spentByDate[e.date] ?? 0) + e.amount;
 		}
-		return computeCycleLedger(bound, defaultLimitForDate, spentByDate);
+		const incomeByDate: Record<string, number> = {};
+		for (const inc of data.cycleIncomes ?? []) {
+			incomeByDate[inc.date] = (incomeByDate[inc.date] ?? 0) + inc.amount;
+		}
+		return computeCycleLedger(bound, defaultLimitForDate, spentByDate, incomeByDate);
 	});
 
 	const today = $derived(todayKey());
@@ -112,6 +116,7 @@
 	const summary = $derived.by(() => {
 		const rs = visibleRows;
 		const totalSpent = rs.reduce((s, r) => s + r.spent, 0);
+		const totalIncome = rs.reduce((s, r) => s + r.income, 0);
 		const endBalance = rs.length ? rs[rs.length - 1].balance : 0;
 		const nDays = rs.length;
 		const avgSpend = nDays ? totalSpent / nDays : 0;
@@ -129,6 +134,7 @@
 
 		return {
 			totalSpent,
+			totalIncome,
 			endBalance,
 			nDays,
 			avgSpend,
@@ -269,6 +275,7 @@
 	{:else}
 		<div class="grid grid-cols-2 gap-3">
 			{@render StatCard({ label: 'Tổng đã chi', value: formatMoney(summary.totalSpent) })}
+			{@render StatCard({ label: 'Tổng thu', value: '+' + formatMoney(summary.totalIncome), accent: 'surplus' })}
 			{@render StatCard({ label: 'Trung bình / ngày', value: formatMoney(summary.avgSpend) })}
 			{@render StatCard({ label: 'Ngày vượt hạn mức', value: `${summary.daysOver}/${summary.nDays}`, accent: summary.daysOver > 0 ? 'deficit' : 'normal' })}
 			{@render StatCard({ label: 'Ngày tiết kiệm', value: `${summary.daysSurplus}/${summary.nDays}`, accent: 'surplus' })}
@@ -328,18 +335,22 @@
 	</div>
 {:else}
 	<div class="rounded-2xl border border-line bg-white">
-		<div class="grid grid-cols-[3.5rem_1fr_1fr_1fr] gap-2 border-b border-line px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted">
+		<div class="grid grid-cols-[3rem_1fr_1fr_1fr_1fr] gap-2 border-b border-line px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted">
 			<span>Ngày</span>
 			<span class="text-right">Hạn mức</span>
 			<span class="text-right">Đã chi</span>
+			<span class="text-right">Thu</span>
 			<span class="text-right">Số dư</span>
 		</div>
 		<ul>
 			{#each visibleRows as row (row.date)}
-				<li class="grid grid-cols-[3.5rem_1fr_1fr_1fr] items-center gap-2 border-b border-line px-4 py-2.5 text-sm last:border-0">
+				<li class="grid grid-cols-[3rem_1fr_1fr_1fr_1fr] items-center gap-2 border-b border-line px-4 py-2.5 text-sm last:border-0">
 					<span class="font-display font-semibold">N{row.cycleDay}</span>
 					<span class="font-display tabular-nums text-right text-muted">{formatMoney(row.limit)}</span>
 					<span class="tabular-nums text-right">{formatMoney(row.spent)}</span>
+					<span class="tabular-nums text-right {row.income > 0 ? 'text-surplus' : 'text-muted'}">
+						{row.income > 0 ? '+' + formatMoney(row.income) : '—'}
+					</span>
 					<span class="font-display tabular-nums text-right font-semibold {row.balance > 0 ? 'text-surplus' : row.balance < 0 ? 'text-deficit' : 'text-muted'}">
 						{formatSignedMoney(row.balance)}
 					</span>

@@ -1,7 +1,16 @@
 import type { PageServerLoad } from './$types';
 import { currentCycle } from '$lib/cycle';
 import { createLimitLookups } from '$lib/settings';
-import type { LimitSetting } from '$lib/types';
+import type { Income, LimitSetting } from '$lib/types';
+
+type PageExpense = {
+	id: string;
+	user_id: string;
+	amount: number;
+	note: string | null;
+	date: string;
+	created_at: string;
+};
 
 export const load: PageServerLoad = async ({ locals, parent }) => {
 	// limitSettings từ layout (profile + lịch sử bảng limit_settings, migration 003).
@@ -9,7 +18,7 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 	const { dayStartForDate } = createLimitLookups(limitSettings ?? []);
 
 	if (!locals.supabase || !locals.supabaseReady) {
-		return { cycleExpenses: [], limitSettings: limitSettings ?? [] };
+		return { cycleExpenses: [], cycleIncomes: [], limitSettings: limitSettings ?? [] };
 	}
 
 	// Vòng hiện tại (chứa hôm nay) — dùng day_start tra theo từng ngày (non-retroactive).
@@ -25,18 +34,25 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 	if (error) {
 		// eslint-disable-next-line no-console
 		console.error('load cycle expenses:', error.message);
-		return { cycleExpenses: [], limitSettings: limitSettings ?? [] };
+		return { cycleExpenses: [], cycleIncomes: [], limitSettings: limitSettings ?? [] };
+	}
+
+	// Khoản thu trong cùng vòng (income cộng vào số dư).
+	const { data: incData, error: incError } = await locals.supabase
+		.from('incomes')
+		.select('id, user_id, amount, note, date, created_at')
+		.gte('date', bound.start)
+		.lte('date', bound.end)
+		.order('created_at', { ascending: false });
+
+	if (incError) {
+		// eslint-disable-next-line no-console
+		console.error('load cycle incomes:', incError.message);
 	}
 
 	return {
-		cycleExpenses: (data ?? []) as Array<{
-			id: string;
-			user_id: string;
-			amount: number;
-			note: string | null;
-			date: string;
-			created_at: string;
-		}>,
+		cycleExpenses: (data ?? []) as PageExpense[],
+		cycleIncomes: (incData ?? []) as Income[],
 		limitSettings: (limitSettings ?? []) as LimitSetting[]
 	};
 };

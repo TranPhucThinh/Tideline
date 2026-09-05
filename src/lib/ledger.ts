@@ -12,7 +12,8 @@ export interface LedgerRow {
 	year: number;
 	limit: number; // hạn mức ngày hôm đó
 	spent: number; // tổng chi tiêu ngày hôm đó
-	balance: number; // limit - spent
+	income: number; // tổng khoản thu ngày hôm đó (0 nếu không có)
+	balance: number; // limit - spent + income
 }
 
 /** Bối cảnh thời điểm "hiện tại" theo giờ local. Tách ra để dễ mock date trong test/UI. */
@@ -96,6 +97,11 @@ export interface LedgerInput {
 	defaultLimitForDate: (date: string) => number;
 	/** map dateKey -> tổng chi tiêu ngày đó (số dương). Có thể chứa cả ngày ngoài tháng; sẽ bỏ qua. */
 	spentByDate: Record<string, number>;
+	/**
+	 * map dateKey -> tổng khoản thu ngày đó (số dương). Khoản thu được cộng vào số dư:
+	 * balance = limit - spent + income. Nếu không gi (vd test cũ), mặc ảo {}.
+	 */
+	incomeByDate?: Record<string, number>;
 }
 
 /**
@@ -104,10 +110,10 @@ export interface LedgerInput {
  * Quy tắc:
  *  - Ngày 1: limit = defaultLimitForDate(ngày 1)
  *  - Ngày N>1: limit = defaultLimitForDate(ngày N) + balance(N-1)
- *  - balance = limit - spent
+ *  - balance = limit - spent + income
  */
 export function computeMonthLedger(input: LedgerInput): LedgerRow[] {
-	const { year, month, defaultLimitForDate, spentByDate } = input;
+	const { year, month, defaultLimitForDate, spentByDate, incomeByDate = {} } = input;
 	const rows: LedgerRow[] = [];
 	const nDays = daysInMonth(year, month);
 	let previousBalance = 0;
@@ -118,8 +124,9 @@ export function computeMonthLedger(input: LedgerInput): LedgerRow[] {
 		const limit =
 			day === 1 ? base : base + previousBalance;
 		const spent = spentByDate[date] ?? 0;
-		const balance = limit - spent;
-		rows.push({ date, day, month, year, limit, spent, balance });
+		const income = incomeByDate[date] ?? 0;
+		const balance = limit - spent + income;
+		rows.push({ date, day, month, year, limit, spent, income, balance });
 		previousBalance = balance;
 	}
 	return rows;

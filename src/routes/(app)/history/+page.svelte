@@ -24,7 +24,11 @@
 		for (const e of data.cycleExpenses) {
 			spentByDate[e.date] = (spentByDate[e.date] ?? 0) + e.amount;
 		}
-		return computeCycleLedger(bound, defaultLimitForDate, spentByDate);
+		const incomeByDate: Record<string, number> = {};
+		for (const inc of data.cycleIncomes ?? []) {
+			incomeByDate[inc.date] = (incomeByDate[inc.date] ?? 0) + inc.amount;
+		}
+		return computeCycleLedger(bound, defaultLimitForDate, spentByDate, incomeByDate);
 	});
 
 	// Nếu là vòng hiện tại, chỉ hiển thị tới ngày hôm nay
@@ -32,6 +36,7 @@
 	const visibleRows = $derived(isCurrent ? rows.filter((r) => r.date <= today) : rows);
 
 	const totalSpent = $derived(visibleRows.reduce((s, r) => s + r.spent, 0));
+	const totalIncome = $derived(visibleRows.reduce((s, r) => s + r.income, 0));
 
 	function goCycle(delta: number) {
 		const target = delta < 0 ? prevCycle(bound, dayStartForDate) : nextCycle(bound, dayStartForDate);
@@ -65,7 +70,7 @@
 		>
 			&larr; Vòng trước
 		</button>
-		<span class="text-xs text-muted">{header}<br />{formatMoney(totalSpent)} đã chi</span>
+		<span class="text-xs text-muted">{header}<br />{formatMoney(totalSpent)} chi · +{formatMoney(totalIncome)} thu</span>
 		<button
 			onclick={() => goCycle(1)}
 			disabled={isCurrent}
@@ -80,22 +85,26 @@
 <section>
 	<div class="rounded-2xl border border-line bg-white">
 		<div
-			class="grid grid-cols-[3rem_1fr_1fr_1fr] gap-2 border-b border-line px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted"
+			class="grid grid-cols-[2.7rem_1fr_1fr_1fr_1fr] gap-2 border-b border-line px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted"
 		>
 			<span>Ngày</span>
 			<span class="text-right">Hạn mức</span>
 			<span class="text-right">Đã chi</span>
+			<span class="text-right">Thu</span>
 			<span class="text-right">Số dư</span>
 		</div>
 
 		<ul>
 			{#each visibleRows as row (row.date)}
 				<li
-					class="grid grid-cols-[3rem_1fr_1fr_1fr] items-center gap-2 border-b border-line px-4 py-2.5 last:border-0 text-sm"
+					class="grid grid-cols-[2.7rem_1fr_1fr_1fr_1fr] items-center gap-2 border-b border-line px-4 py-2.5 last:border-0 text-sm"
 				>
 					<span class="font-display font-semibold">{row.day}</span>
 					<span class="font-display tabular-nums text-right text-muted">{formatMoney(row.limit)}</span>
 					<span class="tabular-nums text-right">{formatMoney(row.spent)}</span>
+					<span class="tabular-nums text-right {row.income > 0 ? 'text-surplus' : 'text-muted'}">
+						{row.income > 0 ? '+' + formatMoney(row.income) : '—'}
+					</span>
 					<span
 						class="font-display tabular-nums text-right font-semibold
 							{row.balance > 0 ? 'text-surplus' : row.balance < 0 ? 'text-deficit' : 'text-muted'}"

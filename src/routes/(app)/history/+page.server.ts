@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { cycleOf, type CycleBound } from '$lib/cycle';
 import { createLimitLookups } from '$lib/settings';
-import type { LimitSetting } from '$lib/types';
+import type { Income, LimitSetting } from '$lib/types';
 
 // Hỗ trợ ?start=YYYY-MM-DD (ngày bắt đầu vòng). Mặc định = vòng hiện tại.
 function parseStart(raw: string | null): string | null {
@@ -19,6 +19,7 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 		return {
 			bound: cycleOf(today, dayStartForDate),
 			cycleExpenses: [],
+			cycleIncomes: [],
 			limitSettings: limitSettings ?? [],
 			isCurrent: false
 		};
@@ -40,7 +41,19 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 	if (error) {
 		// eslint-disable-next-line no-console
 		console.error('load history cycle:', error.message);
-		return { bound, cycleExpenses: [], limitSettings: limitSettings ?? [], isCurrent };
+		return { bound, cycleExpenses: [], cycleIncomes: [], limitSettings: limitSettings ?? [], isCurrent };
+	}
+
+	const { data: incData, error: incError } = await locals.supabase
+		.from('incomes')
+		.select('id, user_id, amount, note, date, created_at')
+		.gte('date', bound.start)
+		.lte('date', bound.end)
+		.order('date', { ascending: true });
+
+	if (incError) {
+		// eslint-disable-next-line no-console
+		console.error('load history incomes:', incError.message);
 	}
 
 	return {
@@ -53,6 +66,7 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 			date: string;
 			created_at: string;
 		}>,
+		cycleIncomes: (incData ?? []) as Income[],
 		limitSettings: (limitSettings ?? []) as LimitSetting[],
 		isCurrent
 	};

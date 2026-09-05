@@ -123,6 +123,7 @@ export interface CycleLedgerRow {
 	cycleDay: number; // ngày thứ mấy trong vòng (1..)
 	limit: number;
 	spent: number;
+	income: number; // tổng khoản thu ngày đó (0 nếu không có)
 	balance: number;
 }
 
@@ -146,10 +147,12 @@ export type DefaultLimitLookup = (date: string) => number;
 export function computeCycleLedger(
 	bound: CycleBound,
 	defaultLimitForDate: DefaultLimitLookup,
-	spentByDate: Record<string, number>
+	spentByDate: Record<string, number>,
+	incomeByDate?: Record<string, number>
 ): CycleLedgerRow[] {
 	const lookup =
 		typeof defaultLimitForDate === 'number' ? () => defaultLimitForDate : defaultLimitForDate;
+	const incomeMap = incomeByDate ?? {};
 	const rows: CycleLedgerRow[] = [];
 	let cur = bound.start;
 	let cycleDay = 1;
@@ -160,13 +163,15 @@ export function computeCycleLedger(
 		const base = lookup(cur);
 		const limit = cycleDay === 1 ? base : base + previousBalance;
 		const spent = spentByDate[cur] ?? 0;
-		const balance = limit - spent;
+		const income = incomeMap[cur] ?? 0;
+		const balance = limit - spent + income;
 		rows.push({
 			date: cur,
 			day: td,
 			cycleDay,
 			limit,
 			spent,
+			income,
 			balance
 		});
 		previousBalance = balance;

@@ -19,6 +19,16 @@ export interface Expense {
 	created_at: string;
 }
 
+/** Khoản thu (income) — tiền user NHĀN (vd lương). Cộng vào số dư hằng ngày. Xem setup.sql / migration 004. */
+export interface Income {
+	id: string;
+	user_id: string;
+	amount: number;
+	note: string | null;
+	date: string; // 'YYYY-MM-DD'
+	created_at: string;
+}
+
 /**
  * Một dòng trong bảng `limit_settings` — lịch sử thay đổi cài đặt hạn mức / ngày bắt
  * đầu vòng (append-only, xem migration 003). Giá trị `default_limit`/`day_start` được
