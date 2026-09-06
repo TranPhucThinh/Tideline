@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { formatMoney, parseMoneyInput } from '$lib/money';
 	import Spinner from '$lib/Spinner.svelte';
+	import MoneyInput from '$lib/MoneyInput.svelte';
 
 	let { data } = $props();
 	const supabase = createClient();
@@ -92,16 +93,13 @@
 			<p class="rounded-lg bg-surplus-bg px-3 py-2 text-sm text-surplus">{limitMsg}</p>
 		{/if}
 		<div>
-			<label for="limit" class="text-sm font-medium text-muted">Hạn mức mặc định (đ)</label>
-			<input
+			<MoneyInput
 				id="limit"
 				name="limit"
-				type="text"
-				inputmode="numeric"
-				autocomplete="off"
-				bind:value={input}
-				placeholder={String(displayedLimit)}
-				class="font-display mt-1 w-full rounded-xl border border-line bg-cream px-4 py-3 text-lg font-semibold tabular-nums outline-none focus:border-ink"
+				label="Hạn mức mặc định (đ)"
+				value={input}
+				onchange={(v) => (input = v)}
+				placeholder={displayedLimit ? String(displayedLimit).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '0'}
 			/>
 		</div>
 		<button

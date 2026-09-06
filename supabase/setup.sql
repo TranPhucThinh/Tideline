@@ -75,6 +75,10 @@ drop policy if exists "expenses select own" on public.expenses;
 create policy "expenses select own" on public.expenses
   for select using ((select auth.uid()) = user_id);
 
+drop policy if exists "expenses update own" on public.expenses;
+create policy "expenses update own" on public.expenses
+  for update using ((select auth.uid()) = user_id);
+
 drop policy if exists "expenses delete own" on public.expenses;
 create policy "expenses delete own" on public.expenses
   for delete using ((select auth.uid()) = user_id);

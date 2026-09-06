@@ -8,6 +8,7 @@
 	import DateField from '$lib/DateField.svelte';
 	import Spinner from '$lib/Spinner.svelte';
 	import ConfirmDialog from '$lib/ConfirmDialog.svelte';
+	import MoneyInput from '$lib/MoneyInput.svelte';
 
 	let { data } = $props();
 
@@ -315,15 +316,11 @@
 			onchange={(d) => (dateInput = d)}
 		/>
 		<div>
-			<label for="amount" class="text-sm font-medium text-muted">Số tiền (đ)</label>
-			<input
+			<MoneyInput
 				id="amount"
-				type="text"
-				inputmode="numeric"
-				autocomplete="off"
-				placeholder="0"
-				bind:value={amountInput}
-				class="font-display mt-1 w-full rounded-xl border border-line bg-cream px-4 py-3 text-lg font-semibold tabular-nums outline-none focus:border-ink"
+				label="Số tiền (đ)"
+				value={amountInput}
+				onchange={(v) => (amountInput = v)}
 			/>
 		</div>
 		<div>
@@ -400,15 +397,12 @@
 				<p class="mb-2 rounded-lg bg-deficit-bg px-3 py-2 text-sm text-deficit">{editError}</p>
 			{/if}
 			<div>
-				<label for="edit-amount" class="text-sm font-medium text-muted">Số tiền (đ)</label>
-				<input
+				<MoneyInput
 					id="edit-amount"
-					type="text"
-					inputmode="numeric"
-					autocomplete="off"
-					placeholder="0"
-					bind:value={editAmount}
-					class="font-display mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2 text-lg font-semibold tabular-nums outline-none focus:border-ink"
+					label="Số tiền (đ)"
+					value={editAmount}
+					onchange={(v) => (editAmount = v)}
+					compact
 				/>
 			</div>
 			<div class="mt-2">
