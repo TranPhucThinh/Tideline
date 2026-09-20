@@ -1,9 +1,11 @@
 /**
  * Core logic — quy tắc hạn mức (quan trọng nhất của app).
  *
- * Dùng ngày theo giờ local của trình duyệt, KHÔNG dùng UTC (tránh lệch ngày).
- * Mọi giá trị ngày được biểu diễn là chuỗi `YYYY-MM-DD` theo local time.
+ * Dùng timezone nghiệp vụ của ứng dụng (Asia/Ho_Chi_Minh), không phụ thuộc timezone
+ * của browser/server. Mọi giá trị ngày được biểu diễn là chuỗi `YYYY-MM-DD`.
  */
+
+import { todayKey as configuredTodayKey, toDateKey } from './date.ts';
 
 export interface LedgerRow {
 	date: string; // 'YYYY-MM-DD' local
@@ -18,11 +20,11 @@ export interface LedgerRow {
 
 /** Bối cảnh thời điểm "hiện tại" theo giờ local. Tách ra để dễ mock date trong test/UI. */
 function todayParts(): { year: number; month: number; day: number } {
-	const d = new Date();
+	const [year, month, day] = configuredTodayKey().split('-').map(Number);
 	return {
-		year: d.getFullYear(),
-		month: d.getMonth() + 1, // 1..12
-		day: d.getDate()
+		year,
+		month,
+		day
 	};
 }
 
@@ -32,17 +34,11 @@ export function daysInMonth(year: number, month: number): number {
 	return new Date(year, month, 0).getDate();
 }
 
-/** Format `YYYY-MM-DD` theo local. */
-export function toDateKey(year: number, month: number, day: number): string {
-	const mm = String(month).padStart(2, '0');
-	const dd = String(day).padStart(2, '0');
-	return `${year}-${mm}-${dd}`;
-}
+export { toDateKey } from './date.ts';
 
 /** Lấy key `YYYY-MM-DD` local của hôm nay. */
 export function todayKey(): string {
-	const t = todayParts();
-	return toDateKey(t.year, t.month, t.day);
+	return configuredTodayKey();
 }
 
 export interface MonthKey {

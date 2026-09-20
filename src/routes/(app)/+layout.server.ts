@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import type { Profile, LimitSetting } from '$lib/types';
 import { DEFAULT_LIMIT, DEFAULT_DAY_START } from '$lib/settings';
+import { todayKey } from '$lib/date';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	// Chưa cấu hình Supabase -> đưa đến trang setup hướng dẫn
@@ -79,13 +80,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		limitSettings
 	};
 };
-
-function todayKey(): string {
-	const d = new Date();
-	const mm = String(d.getMonth() + 1).padStart(2, '0');
-	const dd = String(d.getDate()).padStart(2, '0');
-	return `${d.getFullYear()}-${mm}-${dd}`;
-}
 
 function clampDayStart(v: number | undefined | null): number {
 	if (typeof v !== 'number') return DEFAULT_DAY_START;

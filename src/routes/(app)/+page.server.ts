@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types';
 import { currentCycle } from '$lib/cycle';
 import { createLimitLookups } from '$lib/settings';
 import type { Income, LimitSetting } from '$lib/types';
+import { todayKey } from '$lib/date';
 
 type PageExpense = {
 	id: string;
@@ -24,11 +25,13 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 	// Vòng hiện tại (chứa hôm nay) — dùng day_start tra theo từng ngày (non-retroactive).
 	const bound = currentCycle(dayStartForDate);
 
+	const today = todayKey();
+	// Load the user's entries through today so the date picker can safely show
+	// and edit a backfilled date, even when it is outside the current cycle.
 	const { data, error } = await locals.supabase
 		.from('expenses')
 		.select('id, user_id, amount, note, date, created_at')
-		.gte('date', bound.start)
-		.lte('date', bound.end)
+		.lte('date', today)
 		.order('created_at', { ascending: false });
 
 	if (error) {
@@ -41,8 +44,7 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 	const { data: incData, error: incError } = await locals.supabase
 		.from('incomes')
 		.select('id, user_id, amount, note, date, created_at')
-		.gte('date', bound.start)
-		.lte('date', bound.end)
+		.lte('date', today)
 		.order('created_at', { ascending: false });
 
 	if (incError) {

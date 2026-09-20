@@ -91,6 +91,9 @@
 		aria-label="Hướng dẫn sử dụng"
 		tabindex="-1"
 		onclick={closeFromBackdrop}
+		onkeydown={(event) => {
+			if (event.key === 'Escape') close();
+		}}
 	>
 		<div
 			class="mx-auto w-full max-w-[430px] rounded-t-3xl border border-line bg-cream p-6 shadow-xl sm:rounded-3xl"

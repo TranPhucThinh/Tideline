@@ -8,6 +8,7 @@
  */
 
 import { daysInMonth, toDateKey } from './ledger.ts';
+import { todayKey as configuredTodayKey } from './date.ts';
 
 /**
  * Kiểu hàm tra cứu ngày bắt đầu vòng theo 1 ngày. Thay vì nhận một `dayStart: number`
@@ -183,8 +184,7 @@ export function computeCycleLedger(
 
 /** Ngày hôm nay 'YYYY-MM-DD' theo giờ local. */
 export function todayKey(): string {
-	const d = new Date();
-	return toDateKey(d.getFullYear(), d.getMonth() + 1, d.getDate());
+	return configuredTodayKey();
 }
 
 /** Vòng hiện tại (chứa hôm nay) theo giờ local. */

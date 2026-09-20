@@ -2,20 +2,15 @@ import type { PageServerLoad } from './$types';
 import { cycleOf, type CycleBound } from '$lib/cycle';
 import { createLimitLookups } from '$lib/settings';
 import type { Income, LimitSetting } from '$lib/types';
+import { isValidDateKey, todayKey } from '$lib/date';
 
 export const load: PageServerLoad = async ({ url, locals, parent }) => {
 	const { limitSettings } = await parent();
 	const { dayStartForDate } = createLimitLookups(limitSettings ?? []);
 
-	const todayKey = (d: Date) => {
-		const mm = String(d.getMonth() + 1).padStart(2, '0');
-		const dd = String(d.getDate()).padStart(2, '0');
-		return `${d.getFullYear()}-${mm}-${dd}`;
-	};
-
 	if (!locals.supabase || !locals.supabaseReady) {
 		return {
-			bound: cycleOf(todayKey(new Date()), dayStartForDate),
+			bound: cycleOf(todayKey(), dayStartForDate),
 			cycleExpenses: [],
 			cycleIncomes: [],
 			limitSettings: limitSettings ?? [],
@@ -23,10 +18,11 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 		};
 	}
 
-	const cur = cycleOf(todayKey(new Date()), dayStartForDate);
+	const cur = cycleOf(todayKey(), dayStartForDate);
 	const raw = url.searchParams.get('start');
-	const start = raw && /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : null;
-	const bound: CycleBound = start ? cycleOf(start, dayStartForDate) : cur;
+	const start = raw && isValidDateKey(raw) ? raw : null;
+	const requested = start ? cycleOf(start, dayStartForDate) : cur;
+	const bound: CycleBound = requested.start > cur.start ? cur : requested;
 	const isCurrent = bound.start === cur.start;
 
 	const { data, error } = await locals.supabase

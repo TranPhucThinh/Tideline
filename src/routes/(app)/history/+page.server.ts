@@ -2,11 +2,12 @@ import type { PageServerLoad } from './$types';
 import { cycleOf, type CycleBound } from '$lib/cycle';
 import { createLimitLookups } from '$lib/settings';
 import type { Income, LimitSetting } from '$lib/types';
+import { isValidDateKey, todayKey } from '$lib/date';
 
 // Hỗ trợ ?start=YYYY-MM-DD (ngày bắt đầu vòng). Mặc định = vòng hiện tại.
 function parseStart(raw: string | null): string | null {
 	if (!raw) return null;
-	if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+	if (!isValidDateKey(raw)) return null;
 	return raw;
 }
 
@@ -15,7 +16,7 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 	const { dayStartForDate } = createLimitLookups(limitSettings ?? []);
 
 	if (!locals.supabase || !locals.supabaseReady) {
-		const today = toDateKey(new Date());
+			const today = todayKey();
 		return {
 			bound: cycleOf(today, dayStartForDate),
 			cycleExpenses: [],
@@ -25,10 +26,12 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 		};
 	}
 
-	const cur = cycleOf(toDateKey(new Date()), dayStartForDate);
+	const cur = cycleOf(todayKey(), dayStartForDate);
 	const raw = url.searchParams.get('start');
 	const start = parseStart(raw);
-	const bound: CycleBound = start ? cycleOf(start, dayStartForDate) : cur;
+	const requested = start ? cycleOf(start, dayStartForDate) : cur;
+	// Never expose a future cycle through a hand-written URL.
+	const bound: CycleBound = requested.start > cur.start ? cur : requested;
 	const isCurrent = bound.start === cur.start;
 
 	const { data, error } = await locals.supabase
@@ -71,9 +74,3 @@ export const load: PageServerLoad = async ({ url, locals, parent }) => {
 		isCurrent
 	};
 };
-
-function toDateKey(d: Date): string {
-	const mm = String(d.getMonth() + 1).padStart(2, '0');
-	const dd = String(d.getDate()).padStart(2, '0');
-	return `${d.getFullYear()}-${mm}-${dd}`;
-}

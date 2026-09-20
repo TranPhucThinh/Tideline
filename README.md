@@ -16,7 +16,7 @@ Stack: **SvelteKit + TailwindCSS + Supabase** (Postgres + Auth + RLS).
    cp .env.example .env
    ```
 
-4. Mở **SQL Editor** trong Supabase và chạy **[`supabase/setup.sql`](./supabase/setup.sql)** — script này tạo bảng `profiles`/`expenses`/`incomes`/`limit_settings`, bật **RLS**, chính sách truy cập theo user, và **trigger** tự tạo profile (`default_limit = 100000`) khi có user mới đăng ký.
+4. Mở **SQL Editor** trong Supabase và chạy **[`supabase/setup.sql`](./supabase/setup.sql)** — script này tạo bảng `profiles`/`expenses`/`incomes`/`limit_settings`, bật **RLS**, chính sách truy cập theo user, trigger chặn giao dịch tương lai, RPC cập nhật setting atomic, và trigger tự tạo profile (`default_limit = 100000`) khi có user mới đăng ký. Với project đã có dữ liệu, chạy thêm các migration theo thứ tự, mới nhất là `006_atomic_limit_settings.sql` và `007_reject_future_entries.sql`.
 
 > Nếu Supabase chưa được cấu hình, app vẫn chạy và hiển thị trang hướng dẫn tại `/setup`.
 
@@ -51,7 +51,7 @@ Xem [`src/lib/ledger.ts`](./src/lib/ledger.ts). Tính **một lần cho cả th�
 hằng ngày — `balance = limit - spent + income`. Khoản thu mang du sang ngày kế tiếp qua
 balance, nên nhân lương giúpa "còn lại hôm nay" và các ngày sau. Xem `src/lib/cycle.ts`.
 
-Mọi tính toán dùng ngày **giờ local của trình duyệt**, không dùng UTC (tránh lệch ngày).
+Mọi tính toán dùng timezone nghiệp vụ **Asia/Ho_Chi_Minh**, không phụ thuộc timezone của browser hay server (tránh lệch ngày khi SSR/deploy ở UTC).
 
 ## Cấu trúc dự án
 

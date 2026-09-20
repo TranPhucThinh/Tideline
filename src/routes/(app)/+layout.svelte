@@ -22,7 +22,7 @@
 	// kể cả khi data.guideSeen chưa kịp cập nhật từ DB sau khi đóng.
 	let autoShown = $state(false);
 	// Chỉ lưu guide_seen=true khi hướng dẫn tự hiện (lần đầu), không lưu khi mở lại thủ công.
-	let persistOnClose = $state(!guideSeen);
+	let persistOnClose = $state(false);
 	let saving = $state(false);
 
 	// Lần truy cập đầu: tự hiện hướng dẫn một lần.
@@ -46,10 +46,7 @@
 			saving = true;
 			const userId = (data.session as { user?: { id?: string } } | undefined)?.user?.id;
 			if (userId) {
-				const { error } = await supabase
-					.from('profiles')
-					.update({ guide_seen: true })
-					.eq('id', userId);
+					const { error } = await supabase.rpc('mark_guide_seen');
 				// Lỗi mạng không chặn việc đóng hướng dẫn; profile sẽ tự lưu lại ở phiên sau nếu cần.
 				void error;
 			}
