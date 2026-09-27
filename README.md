@@ -83,6 +83,13 @@ scripts/verify-cycle.mjs  # Test logic vòng chi tiêu
 
 Frontend SvelteKit dùng adapter `auto`: tự detect **Vercel/Netlify** khi deploy. Backend chạy trên Supabase Cloud (managed), không cần deploy riêng.
 
+## PWA
+
+Ứng dụng có thể cài như một app độc lập trên điện thoại hoặc desktop. Sau khi deploy qua HTTPS,
+mở Tideline bằng Chrome/Edge và chọn **Cài đặt ứng dụng**, hoặc trên iPhone/iPad chọn **Chia sẻ →
+Thêm vào Màn hình chính**. Khi mất kết nối, các trang mới sẽ hiển thị trang ngoại tuyến; dữ liệu tài
+khoản luôn cần Internet để đọc/ghi với Supabase và không bị service worker lưu vào cache.
+
 ## Acceptance criteria
 
 - [x] Đăng ký mới → tự động có `default_limit = 100000` (trigger SQL).

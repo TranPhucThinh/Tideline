@@ -1,0 +1,19 @@
+{
+	"name": "Tideline — Chi tiêu hằng ngày",
+	"short_name": "Tideline",
+	"description": "Quản lý chi tiêu hằng ngày với hạn mức.",
+	"lang": "vi",
+	"start_url": "/",
+	"scope": "/",
+	"display": "standalone",
+	"background_color": "#F7F5F1",
+	"theme_color": "#1F3A35",
+	"icons": [
+		{
+			"src": "/icon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any maskable"
+		}
+	]
+}
