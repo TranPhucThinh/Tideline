@@ -85,7 +85,6 @@
 
 <!-- Bảng chi tiết từng ngày -->
 <section>
-	<p class="mb-2 text-xs text-muted md:hidden">Vuốt ngang để xem đủ các cột.</p>
 	<LedgerTable rows={visibleRows} compactRows label="Lịch sử chi tiêu" />
 
 	{#if visibleRows.length === 0}
