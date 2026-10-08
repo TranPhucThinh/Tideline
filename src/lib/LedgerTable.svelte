@@ -52,6 +52,8 @@
 		border: 1px solid var(--color-line);
 		border-radius: var(--radius-panel);
 		background: var(--color-white);
+		/* Clip header and final-row backgrounds to the rounded table frame. */
+		overflow: hidden;
 	}
 	.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 	/* Keep column headers available to assistive technology in the stacked view. */
@@ -98,6 +100,8 @@
 			overflow-wrap: anywhere;
 			border-bottom: 1px solid var(--color-line);
 		}
+		.compact-rows tbody tr:last-child > th,
+		.compact-rows tbody tr:last-child > td { border-bottom: 0; }
 		.compact-rows thead th { color: var(--color-muted); font-weight: 500; }
 		.compact-rows th:first-child { width: 3rem; padding-left: 0.75rem; text-align: left; }
 		.compact-rows th:last-child, .compact-rows td:last-child { padding-right: 0.5rem; }
