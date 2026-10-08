@@ -1,5 +1,6 @@
 import { cycleOf, computeCycleLedger, shiftDays, prevCycle, nextCycle, currentCycle } from '../src/lib/cycle.ts';
 import { createLimitLookups, constLimit } from '../src/lib/settings.ts';
+import { themeIndexForCycle, themeName } from '../src/lib/appearance.ts';
 
 let fail = 0;
 const T = (name, cond) => { if (!cond) fail++; console.log(`${cond ? 'PASS' : 'FAIL'} ${name}`); };
@@ -91,6 +92,13 @@ const { dayStartForDate: dsDayStart } = createLimitLookups(dsSettings);
 const dsCycle = cycleOf('2026-08-10', dsDayStart);
 T('day_start đổi giữa vòng: vòng hiện tại giữ ranh giới cũ start 21/7', dsCycle.start === '2026-07-21');
 T('day_start đổi giữa vòng: vòng hiện tại giữ ranh giới cũ end 20/8', dsCycle.end === '2026-08-20');
+
+// UI theme rotates by cycle month, independently of the selected visual style.
+T('theme: account cycle starts at theme 1', themeIndexForCycle('2026-07-21', '2026-07-21') === 0);
+T('theme: next cycle advances once', themeIndexForCycle('2026-08-21', '2026-07-21') === 1);
+T('theme: fifth cycle returns to theme 1', themeIndexForCycle('2026-11-21', '2026-07-21') === 0);
+T('theme: account created mid-cycle starts at theme 1', themeIndexForCycle(cycleOf('2026-08-15', 21).start, cycleOf('2026-08-15', 21).start) === 0);
+T('theme: same index selects a theme in either style', themeName('skeuomorphic', 1) === 'Đồng thau' && themeName('modern', 1) === 'Dawn');
 
 console.log(fail === 0 ? '\nALL PASS' : `\n${fail} FAILED`);
 process.exit(fail === 0 ? 0 : 1);

@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { parseMoneyInput } from '$lib/money';
 import { todayKey } from '$lib/date';
+import { isVisualStyle } from '$lib/appearance';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.supabase || !locals.supabaseReady) {
@@ -48,6 +49,26 @@ async function currentProfile(
 }
 
 export const actions: Actions = {
+	updateVisualStyle: async ({ request, locals }) => {
+		if (!locals.supabase || !locals.supabaseReady) {
+			return fail(500, { styleMessage: 'Supabase chưa được cấu hình.' });
+		}
+		const {
+			data: { session }
+		} = await locals.supabase.auth.getSession();
+		if (!session) return fail(401, { styleMessage: 'Vui lòng đăng nhập lại.' });
+
+		const formData = await request.formData();
+		const value = formData.get('visualStyle');
+		if (!isVisualStyle(value)) {
+			return fail(400, { styleMessage: 'Hãy chọn một kiểu giao diện hợp lệ.' });
+		}
+		const { error } = await locals.supabase.rpc('save_visual_style', { p_visual_style: value });
+		if (error) {
+			return fail(500, { styleMessage: 'Không thể lưu giao diện. Hãy kiểm tra migration 008 và thử lại.' });
+		}
+		return { success: true, visualStyle: value };
+	},
 	updateLimit: async ({ request, locals }) => {
 		if (!locals.supabase || !locals.supabaseReady) {
 			return fail(500, { message: 'Supabase chưa được cấu hình.', default_limit: null });

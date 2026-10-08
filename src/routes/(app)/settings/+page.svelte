@@ -6,6 +6,8 @@
 	import { formatMoney, parseMoneyInput } from '$lib/money';
 	import Spinner from '$lib/Spinner.svelte';
 	import MoneyInput from '$lib/MoneyInput.svelte';
+	import { isVisualStyle, themeName, type VisualStyle } from '$lib/appearance';
+	import { untrack } from 'svelte';
 
 	let { data } = $props();
 	const supabase = createClient();
@@ -14,6 +16,9 @@
 	// Sau khi lưu thành công, cập nhật local state + invalidateAll để server tải lại sạch.
 	let displayedLimit = $state((data.defaultLimit as number | undefined) ?? 0);
 	let displayedDayStart = $state((data.dayStart as number | undefined) ?? 1);
+	let displayedStyle = $state<VisualStyle>(untrack(() => isVisualStyle(data.visualStyle) ? data.visualStyle : 'modern'));
+	let selectedStyle = $state<VisualStyle>(untrack(() => displayedStyle));
+	const currentTheme = $derived(themeName(displayedStyle, (data.themeIndex as number | undefined) ?? 0));
 
 	let input = $state('');
 	let dayStartInput = $state(String(displayedDayStart));
@@ -24,6 +29,9 @@
 	let savingLimit = $state(false);
 	let savingDayStart = $state(false);
 	let loggingOut = $state(false);
+	let savingStyle = $state(false);
+	let styleMsg = $state('');
+	let styleSuccess = $state(false);
 
 	// Đồng bộ lại nếu page data đổi (vd sau invalidateAll khi quay lại trang)
 	$effect(() => {
@@ -31,7 +39,23 @@
 		const d = data.dayStart as number | undefined;
 		if (typeof l === 'number') displayedLimit = l;
 		if (typeof d === 'number') displayedDayStart = d;
+		if (isVisualStyle(data.visualStyle)) {
+			displayedStyle = data.visualStyle;
+			selectedStyle = data.visualStyle;
+		}
 	});
+
+	function onStyleSubmit(result: { type: string; data?: Record<string, unknown> }) {
+		savingStyle = false;
+		styleSuccess = result.type === 'success';
+		styleMsg = result.type === 'success'
+			? 'Đã lưu kiểu giao diện.'
+			: String(result.data?.styleMessage ?? 'Không thể lưu giao diện. Hãy thử lại.');
+		if (result.type === 'success') {
+			displayedStyle = selectedStyle;
+			void invalidateAll();
+		}
+	}
 
 	function onLimitSubmit(result: { type: string; data?: Record<string, unknown> }) {
 		savingLimit = false;
@@ -77,6 +101,51 @@
 <h1 class="page-title mb-6">Cài đặt</h1>
 
 <div class="md:grid md:grid-cols-2 md:items-start md:gap-6">
+
+<section class="appearance-settings rounded-2xl border border-line bg-white p-5 md:col-span-2 md:p-6">
+	<h2 class="section-title">Giao diện</h2>
+	<p class="mt-1 text-sm text-muted">Chọn kiểu bạn thích. Trong mỗi kiểu, một trong 4 theme sẽ tự đổi khi bắt đầu vòng chi tiêu mới.</p>
+	<p class="mt-2 text-sm text-muted">Vòng này: <span class="font-semibold text-ink">{currentTheme}</span></p>
+	<form
+		method="POST"
+		action="?/updateVisualStyle"
+		onsubmit={() => (savingStyle = true)}
+		use:enhance={() => async ({ result }) => onStyleSubmit(result)}
+		class="mt-4"
+	>
+		{#if styleMsg}
+			<p role="status" class="mb-4 rounded-lg px-3 py-2 text-sm {styleSuccess ? 'bg-surplus-bg text-surplus' : 'bg-deficit-bg text-deficit'}">{styleMsg}</p>
+		{/if}
+		<fieldset disabled={savingStyle}>
+			<legend class="sr-only">Kiểu giao diện</legend>
+			<div class="grid gap-3 sm:grid-cols-2">
+				<label class="appearance-choice" class:appearance-choice-selected={selectedStyle === 'modern'}>
+					<input type="radio" name="visualStyle" value="modern" bind:group={selectedStyle} />
+					<span class="appearance-choice-content">
+						<span class="appearance-choice-title">Hiện tại</span>
+						<span class="appearance-choice-desc">Thoáng, phẳng, dễ tập trung vào số liệu.</span>
+						<span class="appearance-sample appearance-sample-modern" aria-hidden="true"><span>Còn lại hôm nay</span><strong>100.000 đ</strong></span>
+						<span class="appearance-swatches" aria-hidden="true"><i class="swatch-modern-0"></i><i class="swatch-modern-1"></i><i class="swatch-modern-2"></i><i class="swatch-modern-3"></i></span>
+						<span class="appearance-choice-names">Tide · Dawn · Slate · Bloom</span>
+					</span>
+				</label>
+				<label class="appearance-choice" class:appearance-choice-selected={selectedStyle === 'skeuomorphic'}>
+					<input type="radio" name="visualStyle" value="skeuomorphic" bind:group={selectedStyle} />
+					<span class="appearance-choice-content">
+						<span class="appearance-choice-title">Sổ tay</span>
+						<span class="appearance-choice-desc">Bề mặt giấy, nét mực và nút bấm có chiều sâu.</span>
+						<span class="appearance-sample appearance-sample-skeuo" aria-hidden="true"><span>Còn lại hôm nay</span><strong>100.000 đ</strong></span>
+						<span class="appearance-swatches" aria-hidden="true"><i class="swatch-skeuo-0"></i><i class="swatch-skeuo-1"></i><i class="swatch-skeuo-2"></i><i class="swatch-skeuo-3"></i></span>
+						<span class="appearance-choice-names">Sổ thu chi · Đồng thau · Men biển · Đất nung</span>
+					</span>
+				</label>
+			</div>
+		</fieldset>
+		<button type="submit" disabled={savingStyle || selectedStyle === displayedStyle} class="ui-button ui-button-primary mt-4 w-full sm:w-auto">
+			{#if savingStyle}<Spinner color="white" /> Đang lưu…{:else}Lưu giao diện{/if}
+		</button>
+	</form>
+</section>
 
 <section class="mt-6 md:mt-0 rounded-2xl border border-line bg-white p-5 md:p-6">
 	<h2 class="section-title">Hạn mức mặc định mỗi ngày</h2>

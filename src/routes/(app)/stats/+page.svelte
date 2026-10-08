@@ -170,11 +170,14 @@
 
 	$effect(() => {
 		if (view !== 'chart' || !canvas) return;
+		// Recreate the canvas chart after the cycle/theme changes.
+		void data.themeIndex;
+		void data.visualStyle;
 		const { labels, dateLabels, balance, spent } = aggregateForChart(visibleRows, granularity);
 		const metric = chartMetric;
 		const values = metric === 'balance' ? balance : spent;
 
-		const theme = getComputedStyle(document.documentElement);
+		const theme = getComputedStyle(canvas.closest('.app-appearance') ?? document.documentElement);
 		const ink = theme.getPropertyValue('--color-ink').trim();
 		const surplus = theme.getPropertyValue('--color-surplus').trim();
 		const deficit = theme.getPropertyValue('--color-deficit').trim();

@@ -28,6 +28,192 @@
 	--font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Each style owns four cycle palettes. The first modern palette is the existing UI. */
+.app-appearance {
+	background-color: var(--color-canvas);
+	color: var(--color-ink);
+	box-shadow: 0 0 0 100vmax var(--color-canvas);
+	--material-edge: var(--color-line);
+	--material-shadow: rgb(32 58 86 / 13%);
+}
+
+.app-appearance[data-ui-theme='modern-1'] {
+	--color-canvas: #f8f3eb;
+	--color-white: #fffefa;
+	--color-ink: #473328;
+	--color-muted: #6d5c50;
+	--color-line: #e6d9c9;
+	--color-input-line: #a08a77;
+	--color-surplus: #386d4d;
+	--color-surplus-bg: #e6f0e4;
+	--color-deficit: #a3473d;
+	--color-deficit-bg: #f8e8e3;
+}
+
+.app-appearance[data-ui-theme='modern-2'] {
+	--color-canvas: #eef2f3;
+	--color-white: #ffffff;
+	--color-ink: #293e48;
+	--color-muted: #51636b;
+	--color-line: #d5e0e3;
+	--color-input-line: #7c949d;
+	--color-surplus: #236c60;
+	--color-surplus-bg: #ddede9;
+	--color-deficit: #9d4852;
+	--color-deficit-bg: #f5e8e9;
+}
+
+.app-appearance[data-ui-theme='modern-3'] {
+	--color-canvas: #f6f2f7;
+	--color-white: #fffefe;
+	--color-ink: #44364f;
+	--color-muted: #685b71;
+	--color-line: #e3d9e8;
+	--color-input-line: #9886a2;
+	--color-surplus: #286d62;
+	--color-surplus-bg: #e2f0ea;
+	--color-deficit: #a04456;
+	--color-deficit-bg: #f8e8ee;
+}
+
+.app-appearance[data-ui-theme='skeuomorphic-0'] {
+	--color-canvas: #f0e7d8;
+	--color-white: #fffaf0;
+	--color-ink: #35413c;
+	--color-muted: #5e675e;
+	--color-line: #c8baa4;
+	--color-input-line: #897b69;
+	--color-surplus: #2c7059;
+	--color-surplus-bg: #e2ecde;
+	--color-deficit: #a3453d;
+	--color-deficit-bg: #f4e3dd;
+	--material-edge: #bcae97;
+	--material-shadow: rgb(77 58 37 / 20%);
+}
+
+.app-appearance[data-ui-theme='skeuomorphic-1'] {
+	--color-canvas: #eee9dc;
+	--color-white: #fcf9ef;
+	--color-ink: #403a2c;
+	--color-muted: #665f4e;
+	--color-line: #d0c5a9;
+	--color-input-line: #91866d;
+	--color-surplus: #426b45;
+	--color-surplus-bg: #e7ecd9;
+	--color-deficit: #9f493b;
+	--color-deficit-bg: #f4e5dc;
+	--material-edge: #b6a77e;
+	--material-shadow: rgb(70 56 28 / 21%);
+}
+
+.app-appearance[data-ui-theme='skeuomorphic-2'] {
+	--color-canvas: #e6edec;
+	--color-white: #f7faf6;
+	--color-ink: #29444a;
+	--color-muted: #4e676a;
+	--color-line: #c4d5d2;
+	--color-input-line: #789593;
+	--color-surplus: #1f705f;
+	--color-surplus-bg: #d9ebe4;
+	--color-deficit: #a3464c;
+	--color-deficit-bg: #f4e5e5;
+	--material-edge: #a2bdb8;
+	--material-shadow: rgb(29 65 68 / 18%);
+}
+
+.app-appearance[data-ui-theme='skeuomorphic-3'] {
+	--color-canvas: #f1e7df;
+	--color-white: #fff8f0;
+	--color-ink: #503b33;
+	--color-muted: #705c53;
+	--color-line: #dbc5b6;
+	--color-input-line: #a58a7a;
+	--color-surplus: #3c7055;
+	--color-surplus-bg: #e1ebdc;
+	--color-deficit: #a3473e;
+	--color-deficit-bg: #f7e5de;
+	--material-edge: #c4a896;
+	--material-shadow: rgb(91 55 39 / 20%);
+}
+
+/* Physical depth is specific to the Sổ tay style; the task layout stays familiar. */
+.app-appearance[data-ui-style='skeuomorphic'] {
+	background-image: linear-gradient(145deg, rgb(255 255 255 / 22%), transparent 48%);
+}
+
+.app-appearance[data-ui-style='skeuomorphic'] :is(section, form).rounded-2xl,
+.app-appearance[data-ui-style='skeuomorphic'] .ledger-surface {
+	border-color: var(--material-edge);
+	background-image: linear-gradient(145deg, rgb(255 255 255 / 50%), transparent 55%);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 80%), 0 8px 18px -9px var(--material-shadow), 0 3px 6px -4px var(--material-shadow);
+}
+
+.app-appearance[data-ui-style='skeuomorphic'] .ui-input {
+	box-shadow: inset 0 2px 4px rgb(54 43 30 / 12%), 0 1px 0 rgb(255 255 255 / 80%);
+}
+
+.app-appearance[data-ui-style='skeuomorphic'] .ui-dialog {
+	border: 1px solid var(--material-edge);
+	background-image: linear-gradient(145deg, rgb(255 255 255 / 42%), transparent 55%);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 85%), 0 16px 36px -14px var(--material-shadow);
+}
+
+.app-appearance[data-ui-style='skeuomorphic'] .ui-button,
+.app-appearance[data-ui-style='skeuomorphic'] nav a[aria-current='page'] {
+	border: 1px solid var(--material-edge);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 35%), 0 3px 7px -3px var(--material-shadow);
+}
+
+.app-appearance[data-ui-style='skeuomorphic'] .ui-button:active:not(:disabled) {
+	transform: translateY(1px);
+	box-shadow: inset 0 2px 5px rgb(30 25 20 / 22%);
+}
+
+.app-appearance[data-ui-style='skeuomorphic'] nav {
+	box-shadow: 0 -4px 12px -8px var(--material-shadow);
+}
+
+.appearance-choice {
+	display: flex;
+	gap: 0.75rem;
+	align-items: flex-start;
+	padding: 1rem;
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius-control);
+	background: var(--color-white);
+	cursor: pointer;
+}
+
+.appearance-choice-selected {
+	border-color: var(--color-ink);
+	box-shadow: 0 0 0 1px var(--color-ink);
+}
+
+.appearance-choice:focus-within {
+	outline: 2px solid var(--color-ink);
+	outline-offset: 3px;
+}
+
+.appearance-choice input { margin-top: 0.25rem; accent-color: var(--color-ink); }
+.appearance-choice-content { display: grid; gap: 0.375rem; }
+.appearance-choice-title { font-family: var(--font-display); font-weight: 700; }
+.appearance-choice-desc { color: var(--color-muted); font-size: 0.875rem; }
+.appearance-choice-names { color: var(--color-muted); font-size: 0.75rem; line-height: 1.4; }
+.appearance-sample { display: grid; gap: 0.125rem; width: min(100%, 13rem); margin-block: 0.25rem; padding: 0.625rem 0.75rem; border-radius: 0.75rem; font-size: 0.75rem; }
+.appearance-sample strong { font-family: var(--font-display); font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+.appearance-sample-modern { background: #e1f1ee; color: #16766d; }
+.appearance-sample-skeuo { border: 1px solid #bcae97; background: linear-gradient(145deg, #fffdf5, #efe5d5); color: #35413c; box-shadow: inset 0 1px 0 #fff, 0 5px 9px -5px rgb(77 58 37 / 35%); }
+.appearance-swatches { display: flex; gap: 0.375rem; margin-top: 0.375rem; }
+.appearance-swatches i { width: 1.125rem; height: 1.125rem; border-radius: 50%; border: 1px solid rgb(0 0 0 / 15%); }
+.swatch-modern-0 { background: #203a56; }
+.swatch-modern-1 { background: #473328; }
+.swatch-modern-2 { background: #293e48; }
+.swatch-modern-3 { background: #44364f; }
+.swatch-skeuo-0 { background: #8b7459; }
+.swatch-skeuo-1 { background: #9b8350; }
+.swatch-skeuo-2 { background: #567f80; }
+.swatch-skeuo-3 { background: #a8725d; }
+
 html {
 	scrollbar-gutter: stable;
 	scrollbar-color: var(--color-muted) var(--color-canvas);
@@ -133,13 +319,13 @@ a {
 
 @media (hover: hover) {
 	.ui-button-primary:hover:not(:disabled) {
-		background: #2b4c6b;
+		background: color-mix(in srgb, var(--color-ink) 88%, #ffffff);
 	}
 	.ui-button-secondary:hover:not(:disabled) {
 		background: var(--color-surplus-bg);
 	}
 	.ui-button-danger:hover:not(:disabled) {
-		background: #903a49;
+		background: color-mix(in srgb, var(--color-deficit) 85%, #000000);
 	}
 }
 

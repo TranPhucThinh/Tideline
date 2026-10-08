@@ -10,12 +10,16 @@ export function toDateKey(year: number, month: number, day: number): string {
 }
 
 export function todayKey(): string {
+	return dateKeyInAppTimezone(new Date());
+}
+
+export function dateKeyInAppTimezone(date: Date): string {
 	const parts = new Intl.DateTimeFormat('en-CA', {
 		timeZone: APP_TIMEZONE,
 		year: 'numeric',
 		month: '2-digit',
 		day: '2-digit'
-	}).formatToParts(new Date());
+	}).formatToParts(date);
 	const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
 	return `${values.year}-${values.month}-${values.day}`;
 }

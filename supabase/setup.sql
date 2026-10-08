@@ -7,6 +7,7 @@ create table if not exists public.profiles (
   default_limit numeric not null default 100000,
   day_start integer not null default 1 check (day_start between 1 and 31),
   guide_seen boolean not null default false,
+  visual_style text not null default 'modern' check (visual_style in ('modern', 'skeuomorphic')),
   created_at timestamptz not null default now()
 );
 
@@ -206,6 +207,30 @@ $$;
 
 revoke all on function public.mark_guide_seen() from public;
 grant execute on function public.mark_guide_seen() to authenticated;
+
+-- Giao diện user chọn; màu theme tự suy ra từ chu kỳ trong ứng dụng.
+create or replace function public.save_visual_style(p_visual_style text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'Not authenticated';
+  end if;
+  if p_visual_style not in ('modern', 'skeuomorphic') or p_visual_style is null then
+    raise exception 'Invalid visual style';
+  end if;
+
+  update public.profiles
+  set visual_style = p_visual_style
+  where id = auth.uid();
+end;
+$$;
+
+revoke all on function public.save_visual_style(text) from public;
+grant execute on function public.save_visual_style(text) to authenticated;
 
 -- 5b. Backfill cho user ĐÃ TỒN TẠI trước khi có bảng limit_settings: tạo 1 row với
 -- effective_from = ngày tạo tài khoản, lấy giá trị hiện tại của họ.

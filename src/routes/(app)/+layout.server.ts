@@ -2,7 +2,10 @@ import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import type { Profile, LimitSetting } from '$lib/types';
 import { DEFAULT_LIMIT, DEFAULT_DAY_START } from '$lib/settings';
-import { todayKey } from '$lib/date';
+import { dateKeyInAppTimezone, todayKey } from '$lib/date';
+import { currentCycle, cycleOf } from '$lib/cycle';
+import { createLimitLookups } from '$lib/settings';
+import { isVisualStyle, themeIndexForCycle } from '$lib/appearance';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	// Chưa cấu hình Supabase -> đưa đến trang setup hướng dẫn
@@ -42,6 +45,13 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	const defaultLimit = profile?.default_limit ?? DEFAULT_LIMIT;
 	const dayStart = clampDayStart(profile?.day_start);
 	const guideSeen = profile ? profile.guide_seen ?? false : false;
+	// Separate read keeps existing accounts usable before migration 008 is applied.
+	const { data: appearance } = await locals.supabase
+		.from('profiles')
+		.select('visual_style')
+		.eq('id', session.user.id)
+		.maybeSingle();
+	const visualStyle = isVisualStyle(appearance?.visual_style) ? appearance.visual_style : 'modern';
 
 	// Lịch sử cài đặt hạn mức / ngày bắt đầu vòng (bảng limit_settings, migration 003).
 	// Trang Hôm nay / Lịch sử / Thống kê dùng mảng này để tra cứu value theo TỪNG NGÀY
@@ -70,6 +80,13 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 			}
 		];
 	}
+	const dayStartForDate = createLimitLookups(limitSettings).dayStartForDate;
+	const cycleStart = currentCycle(dayStartForDate).start;
+	const accountCreatedAt = profile?.created_at
+		? dateKeyInAppTimezone(new Date(profile.created_at))
+		: todayKey();
+	const firstCycleStart = cycleOf(accountCreatedAt, dayStartForDate).start;
+	const themeIndex = themeIndexForCycle(cycleStart, firstCycleStart);
 
 	return {
 		session,
@@ -77,6 +94,9 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		defaultLimit,
 		dayStart,
 		guideSeen,
+		visualStyle,
+		themeIndex,
+		cycleStart,
 		limitSettings
 	};
 };

@@ -3,6 +3,10 @@
 	import { createClient } from '$lib/supabaseClient';
 	import type { Snippet } from 'svelte';
 	import StepGuide from '$lib/StepGuide.svelte';
+	import { onMount } from 'svelte';
+	import { invalidateAll } from '$app/navigation';
+	import { todayKey } from '$lib/date';
+	import { isVisualStyle, themeName } from '$lib/appearance';
 
 	let { children, data }: { children: Snippet; data: Record<string, unknown> } = $props();
 
@@ -16,6 +20,26 @@
 	];
 
 	const guideSeen = $derived((data.guideSeen as boolean | undefined) ?? false);
+	const visualStyle = $derived(isVisualStyle(data.visualStyle) ? data.visualStyle : 'modern');
+	const themeIndex = $derived(typeof data.themeIndex === 'number' ? data.themeIndex : 0);
+	const activeTheme = $derived(themeName(visualStyle, themeIndex));
+
+	onMount(() => {
+		let lastDay = todayKey();
+		const refreshOnNewDay = () => {
+			const now = todayKey();
+			if (now !== lastDay) {
+				lastDay = now;
+				void invalidateAll();
+			}
+		};
+		const timer = window.setInterval(refreshOnNewDay, 60_000);
+		document.addEventListener('visibilitychange', refreshOnNewDay);
+		return () => {
+			window.clearInterval(timer);
+			document.removeEventListener('visibilitychange', refreshOnNewDay);
+		};
+	});
 
 	let helpOpen = $state(false);
 	// Cờ cho biết hướng dẫn đã được tự hiện trong phiên này — đảm bảo chỉ hiện đúng một lần,
@@ -56,9 +80,16 @@
 	}
 </script>
 
-<div class="relative mx-auto min-h-dvh w-full max-w-[30rem] md:max-w-5xl">
+<div
+	class="app-appearance relative mx-auto min-h-dvh w-full max-w-[30rem] md:max-w-5xl"
+	data-ui-style={visualStyle}
+	data-ui-theme={`${visualStyle}-${themeIndex}`}
+>
 	<header class="flex items-center justify-between gap-4 px-5 pt-4 md:border-b md:border-line md:px-8 md:py-6">
-		<span class="font-display text-lg font-semibold">Tideline</span>
+		<div>
+			<span class="font-display text-lg font-semibold">Tideline</span>
+			<span class="sr-only">Giao diện {visualStyle === 'modern' ? 'hiện tại' : 'sổ tay'}, theme {activeTheme}</span>
+		</div>
 		<nav class="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-canvas pb-[env(safe-area-inset-bottom)] md:static md:ml-auto md:border-0 md:bg-transparent md:p-0" aria-label="Điều hướng chính">
 			<div class="mx-auto grid max-w-[30rem] grid-cols-4 gap-1 p-2 md:flex md:max-w-none md:p-0">
 				{#each navItems as item (item.href)}
