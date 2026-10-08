@@ -56,46 +56,33 @@
 	}
 </script>
 
-<div class="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col">
-	<main class="flex-1 px-5 pb-28 pt-6">
-		{@render children()}
-	</main>
-
-	<!-- Bottom navigation (mobile app style, fixed) -->
-	<nav
-		class="fixed inset-x-0 bottom-0 z-10"
-		aria-label="Điều hướng chính"
-	>
-		<div class="mx-auto w-full max-w-[430px] border-t border-line bg-cream/95 px-4 pb-[env(safe-area-inset-bottom)] backdrop-blur">
-			<div class="grid grid-cols-4">
+<div class="relative mx-auto min-h-dvh w-full max-w-[30rem] md:max-w-5xl">
+	<header class="flex items-center justify-between gap-4 px-5 pt-4 md:border-b md:border-line md:px-8 md:py-6">
+		<span class="font-display text-lg font-semibold">Tideline</span>
+		<nav class="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-canvas pb-[env(safe-area-inset-bottom)] md:static md:ml-auto md:border-0 md:bg-transparent md:p-0" aria-label="Điều hướng chính">
+			<div class="mx-auto grid max-w-[30rem] grid-cols-4 gap-1 p-2 md:flex md:max-w-none md:p-0">
 				{#each navItems as item (item.href)}
-					<a
-						href={item.href}
-						aria-current={isActive(item.href) ? 'page' : undefined}
-						class="flex flex-col items-center gap-0.5 py-3 text-xs transition-colors {isActive(item.href) ? 'font-semibold text-ink' : 'text-muted hover:text-ink'}"
-					>
+					<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined} class="flex flex-col items-center justify-center gap-1 rounded-control p-2 text-xs text-muted transition-colors aria-[current=page]:bg-surplus-bg aria-[current=page]:font-semibold aria-[current=page]:text-ink hover:not-aria-[current=page]:bg-surplus-bg hover:not-aria-[current=page]:text-ink md:flex-row md:gap-2 md:p-3 md:text-sm">
 						{@render NavGlyph({ name: item.icon, active: isActive(item.href) })}
 						{item.label}
 					</a>
 				{/each}
 			</div>
-		</div>
-	</nav>
-
-	<!-- Nút trợ giúp (?) — mở lại hướng dẫn bất cứ lúc nào -->
-	<button
-		type="button"
-		onclick={() => {
-			persistOnClose = false;
-			helpOpen = true;
-		}}
-		aria-label="Mở hướng dẫn sử dụng"
-		disabled={saving}
-		class="fixed right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-line bg-white/90 text-sm font-bold text-ink shadow-sm backdrop-blur transition-transform active:scale-90 disabled:opacity-50"
-	>
-		?
-	</button>
-
+		</nav>
+		<button
+			type="button"
+			onclick={() => {
+				persistOnClose = false;
+				helpOpen = true;
+			}}
+			aria-label="Mở hướng dẫn sử dụng"
+			disabled={saving}
+			class="flex h-11 w-11 shrink-0 items-center justify-center rounded-control border border-line bg-white font-semibold transition-colors hover:enabled:bg-surplus-bg"
+		>?</button>
+	</header>
+	<main class="px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:px-8 md:pt-8 md:pb-12">
+		{@render children()}
+	</main>
 	<StepGuide open={helpOpen} onclose={closeGuide} />
 </div>
 

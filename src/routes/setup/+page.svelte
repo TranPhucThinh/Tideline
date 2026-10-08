@@ -10,7 +10,7 @@
 </svelte:head>
 
 <div class="mx-auto w-full max-w-[430px] px-5 py-8">
-	<h1 class="font-display text-xl font-bold">{configured ? 'Đã sẵn sàng' : 'Thiết lập ứng dụng'}</h1>
+	<h1 class="page-title">{configured ? 'Đã sẵn sàng' : 'Thiết lập ứng dụng'}</h1>
 
 	{#if configured}
 		<p class="mt-3 rounded-xl bg-surplus-bg px-4 py-3 text-sm text-surplus">
@@ -25,28 +25,28 @@
 	{#if !configured}
 		<ol class="mt-6 space-y-5">
 			<li class="rounded-2xl border border-line bg-white p-4">
-				<h2 class="font-display text-base font-semibold">1. Tạo project Supabase</h2>
+				<h2 class="section-title">1. Tạo project Supabase</h2>
 				<p class="mt-1 text-sm text-muted">
 					Tạo project miễn phí tại supabase.com và mở <span class="font-medium text-ink">Project Settings → API</span>.
 				</p>
 			</li>
 			<li class="rounded-2xl border border-line bg-white p-4">
-				<h2 class="font-display text-base font-semibold">2. Điền thông tin vào file <code class="rounded bg-cream px-1.5 py-0.5">app/.env</code></h2>
+				<h2 class="section-title">2. Điền thông tin vào file <code class="rounded bg-canvas px-1.5 py-0.5">app/.env</code></h2>
 				<p class="mt-1 text-sm text-muted">
 					Sao chép giá trị <span class="font-medium text-ink">Project URL</span> và <span class="font-medium text-ink">anon public key</span> vào
-					<code class="rounded bg-cream px-1.5 py-0.5">PUBLIC_SUPABASE_URL</code> và
-					<code class="rounded bg-cream px-1.5 py-0.5">PUBLIC_SUPABASE_ANON_KEY</code>, rồi khởi động lại server.
+					<code class="rounded bg-canvas px-1.5 py-0.5">PUBLIC_SUPABASE_URL</code> và
+					<code class="rounded bg-canvas px-1.5 py-0.5">PUBLIC_SUPABASE_ANON_KEY</code>, rồi khởi động lại server.
 				</p>
 			</li>
 			<li class="rounded-2xl border border-line bg-white p-4">
-				<h2 class="font-display text-base font-semibold">3. Chạy SQL tạo bảng &amp; RLS</h2>
+				<h2 class="section-title">3. Chạy SQL tạo bảng &amp; RLS</h2>
 				<p class="mt-1 text-sm text-muted">
 					Mở <span class="font-medium text-ink">SQL Editor</span> trong Supabase và chạy đoạn script dưới đây.
 				</p>
 			</li>
 		</ol>
 
-		<div class="mt-5 rounded-2xl border border-line bg-ink text-cream">
+		<div class="mt-5 rounded-2xl border border-line bg-ink text-canvas">
 			<div class="flex items-center justify-between border-b border-white/10 px-4 py-2">
 				<span class="text-sm font-medium">setup.sql</span>
 			</div>
@@ -54,7 +54,7 @@
 		</div>
 
 		<div class="mt-5 rounded-2xl border border-line bg-white p-4 text-sm text-muted">
-			File SQL này cũng được lưu ở <code class="rounded bg-cream px-1.5 py-0.5">app/supabase/setup.sql</code> trong dự án.
+			File SQL này cũng được lưu ở <code class="rounded bg-canvas px-1.5 py-0.5">app/supabase/setup.sql</code> trong dự án.
 		</div>
 
 		<a

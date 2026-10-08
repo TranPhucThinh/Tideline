@@ -16,9 +16,9 @@
 	<title>Đăng nhập — chi tiêu</title>
 </svelte:head>
 
-<div class="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col justify-center px-6">
+<div class="auth-layout">
 	<div class="mb-8">
-		<h1 class="font-display text-2xl font-bold">Đăng nhập</h1>
+		<h1 class="page-title">Đăng nhập</h1>
 		<p class="mt-1 text-sm text-muted">Tiếp tục quản lý chi tiêu hằng ngày của bạn.</p>
 	</div>
 
@@ -65,7 +65,7 @@
 				required
 				bind:value={email}
 				autocomplete="email"
-				class="mt-1 w-full rounded-xl border border-line bg-white px-4 py-3 text-base outline-none focus:border-ink"
+				class="mt-1 w-full border px-4 py-3 text-base ui-input"
 				placeholder="example@gmail.com"
 			/>
 		</div>
@@ -77,14 +77,14 @@
 				required
 				bind:value={password}
 				autocomplete="current-password"
-				class="mt-1 w-full rounded-xl border border-line bg-white px-4 py-3 text-base outline-none focus:border-ink"
+				class="mt-1 w-full border px-4 py-3 text-base ui-input"
 				placeholder="*******"
 			/>
 		</div>
 		<button
 			type="submit"
 			disabled={loading}
-			class="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-base font-semibold text-white disabled:opacity-60"
+			class="ui-button ui-button-primary w-full"
 		>
 			{#if loading}
 				<Spinner color="white" size={18} />

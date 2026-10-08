@@ -88,6 +88,6 @@
 		placeholder={placeholder}
 		oninput={onInput}
 		onfocus={focusAll}
-		class="font-display mt-1 w-full rounded-xl border border-line bg-cream {padClass} font-semibold tabular-nums outline-none focus:border-ink"
+		class="font-display mt-1 w-full border {padClass} font-semibold tabular-nums ui-input"
 	/>
 </div>

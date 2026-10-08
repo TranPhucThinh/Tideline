@@ -63,7 +63,7 @@
 	{/if}
 
 	<!-- Input date ẩn, phủ lên toàn bộ vùng để click mở picker gốc -->
-	<div class="relative mt-1">
+	<div class="date-control relative mt-1">
 		<input
 			id="date-field-input"
 			bind:this={nativeInput}
@@ -78,7 +78,7 @@
 		<button
 			type="button"
 			onclick={openPicker}
-			class="pointer-events-none flex w-full items-center justify-between rounded-xl border border-line bg-cream px-4 py-3 text-left text-base"
+			class="ui-input pointer-events-none flex w-full items-center justify-between border px-4 py-3 text-left text-base"
 			tabindex="-1"
 			aria-hidden="true"
 		>

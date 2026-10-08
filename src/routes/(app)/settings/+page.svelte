@@ -19,6 +19,8 @@
 	let dayStartInput = $state(String(displayedDayStart));
 	let limitMsg = $state('');
 	let dayStartMsg = $state('');
+	let limitSuccess = $state(false);
+	let dayStartSuccess = $state(false);
 	let savingLimit = $state(false);
 	let savingDayStart = $state(false);
 	let loggingOut = $state(false);
@@ -33,6 +35,7 @@
 
 	function onLimitSubmit(result: { type: string; data?: Record<string, unknown> }) {
 		savingLimit = false;
+		limitSuccess = result.type === 'success';
 		limitMsg = result.type === 'success' ? 'Đã cập nhật hạn mức.' : 'Không thể cập nhật.';
 		if (result.type === 'success') {
 			const v = (result.data?.default_limit as number | undefined) ?? input;
@@ -44,6 +47,7 @@
 
 	function onDayStartSubmit(result: { type: string; data?: Record<string, unknown> }) {
 		savingDayStart = false;
+		dayStartSuccess = result.type === 'success';
 		dayStartMsg = result.type === 'success' ? 'Đã cập nhật vòng chi tiêu.' : 'Không thể cập nhật.';
 		if (result.type === 'success') {
 			const v = (result.data?.day_start as number | undefined) ?? Number(dayStartInput);
@@ -70,10 +74,12 @@
 	<title>Cài đặt — chi tiêu</title>
 </svelte:head>
 
-<h1 class="font-display text-xl font-bold">Cài đặt</h1>
+<h1 class="page-title mb-6">Cài đặt</h1>
 
-<section class="mt-5 rounded-2xl border border-line bg-white p-4">
-	<h2 class="font-display text-base font-semibold">Hạn mức mặc định mỗi ngày</h2>
+<div class="md:grid md:grid-cols-2 md:items-start md:gap-6">
+
+<section class="mt-6 md:mt-0 rounded-2xl border border-line bg-white p-5 md:p-6">
+	<h2 class="section-title">Hạn mức mặc định mỗi ngày</h2>
 	<p class="mt-1 text-sm text-muted">
 		Áp dụng cho mọi tính toán tiếp theo. Hiện tại: <span class="font-semibold text-ink">{formatMoney(displayedLimit)}</span>
 	</p>
@@ -90,7 +96,7 @@
 		class="mt-4 space-y-3"
 	>
 		{#if limitMsg}
-			<p class="rounded-lg bg-surplus-bg px-3 py-2 text-sm text-surplus">{limitMsg}</p>
+			<p role="status" class="rounded-lg px-3 py-2 text-sm {limitSuccess ? 'bg-surplus-bg text-surplus' : 'bg-deficit-bg text-deficit'}">{limitMsg}</p>
 		{/if}
 		<div>
 			<MoneyInput
@@ -105,10 +111,10 @@
 		<button
 			type="submit"
 			disabled={savingLimit}
-			class="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-base font-semibold text-white disabled:opacity-60"
+			class="ui-button ui-button-primary w-full"
 		>
 			{#if savingLimit}
-				<Spinner />
+				<Spinner color="white" />
 				Đang lưu…
 			{:else}
 				Lưu hạn mức
@@ -117,8 +123,8 @@
 	</form>
 </section>
 
-<section class="mt-5 rounded-2xl border border-line bg-white p-4">
-	<h2 class="font-display text-base font-semibold">Vòng chi tiêu (chu kỳ)</h2>
+<section class="mt-6 md:mt-0 rounded-2xl border border-line bg-white p-5 md:p-6">
+	<h2 class="section-title">Vòng chi tiêu (chu kỳ)</h2>
 	<p class="mt-1 text-sm text-muted">
 		Mỗi vòng cộng dồn số dư/thiếu sang ngày kế tiếp, rồi reset về hạn mức mặc định ở ngày bắt đầu vòng.
 		Mặc định là <span class="font-semibold text-ink">1</span> (theo tháng dương lịch).
@@ -138,7 +144,7 @@
 		class="mt-4 space-y-3"
 	>
 		{#if dayStartMsg}
-			<p class="rounded-lg bg-surplus-bg px-3 py-2 text-sm text-surplus">{dayStartMsg}</p>
+			<p role="status" class="rounded-lg px-3 py-2 text-sm {dayStartSuccess ? 'bg-surplus-bg text-surplus' : 'bg-deficit-bg text-deficit'}">{dayStartMsg}</p>
 		{/if}
 		<input type="hidden" name="dayStart" value={dayStartInput} />
 		<div>
@@ -151,16 +157,16 @@
 				min="1"
 				max="31"
 				bind:value={dayStartInput}
-				class="font-display mt-1 w-full rounded-xl border border-line bg-cream px-4 py-3 text-lg font-semibold tabular-nums outline-none focus:border-ink"
+				class="font-display mt-1 w-full border px-4 py-3 text-lg font-semibold tabular-nums ui-input"
 			/>
 		</div>
 		<button
 			type="submit"
 			disabled={savingDayStart}
-			class="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-base font-semibold text-white disabled:opacity-60"
+			class="ui-button ui-button-primary w-full"
 		>
 			{#if savingDayStart}
-				<Spinner />
+				<Spinner color="white" />
 				Đang lưu…
 			{:else}
 				Lưu ngày bắt đầu
@@ -169,11 +175,11 @@
 	</form>
 </section>
 
-<section class="mt-5">
+<section class="mt-5 md:col-span-2 md:mt-0">
 	<button
 		onclick={logout}
 		disabled={loggingOut}
-		class="flex w-full items-center justify-center gap-2 rounded-xl border border-deficit/40 bg-deficit-bg py-3 text-base font-semibold text-deficit disabled:opacity-60"
+		class="ui-button w-full border border-deficit/40 bg-deficit-bg text-deficit"
 	>
 		{#if loggingOut}
 			<Spinner color="deficit" />
@@ -183,3 +189,4 @@
 		{/if}
 	</button>
 </section>
+</div>

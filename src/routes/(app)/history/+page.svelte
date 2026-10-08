@@ -7,7 +7,8 @@
 		todayKey,
 		type CycleBound
 	} from '$lib/cycle';
-	import { formatMoney, formatSignedMoney } from '$lib/money';
+	import { formatMoney } from '$lib/money';
+	import LedgerTable from '$lib/LedgerTable.svelte';
 	import { createLimitLookups } from '$lib/settings';
 	import type { LimitSetting } from '$lib/types';
 
@@ -61,20 +62,21 @@
 </svelte:head>
 
 <!-- Tiêu đề + chuyển vòng -->
-<div class="mb-5">
-	<h1 class="font-display text-xl font-bold">Lịch sử</h1>
-	<div class="mt-3 flex items-center justify-between">
+<div class="mb-6">
+	<h1 class="page-title">Lịch sử</h1>
+	<p class="page-context mt-2">{header}</p>
+	<p class="page-context mt-1"><span class="money">{formatMoney(totalSpent)}</span> chi · <span class="money">+{formatMoney(totalIncome)}</span> thu</p>
+	<div class="cycle-controls">
 		<button
 			onclick={() => goCycle(-1)}
-			class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium"
+			class="ui-button ui-button-secondary text-sm"
 		>
 			&larr; Vòng trước
 		</button>
-		<span class="text-xs text-muted">{header}<br />{formatMoney(totalSpent)} chi · +{formatMoney(totalIncome)} thu</span>
 		<button
 			onclick={() => goCycle(1)}
 			disabled={isCurrent}
-			class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium disabled:opacity-40"
+			class="ui-button ui-button-secondary text-sm"
 		>
 			Vòng sau &rarr;
 		</button>
@@ -83,38 +85,7 @@
 
 <!-- Bảng chi tiết từng ngày -->
 <section>
-	<div class="rounded-2xl border border-line bg-white">
-		<div
-			class="grid grid-cols-[2.7rem_1fr_1fr_1fr_1fr] gap-2 border-b border-line px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted"
-		>
-			<span>Ngày</span>
-			<span class="text-right">Hạn mức</span>
-			<span class="text-right">Đã chi</span>
-			<span class="text-right">Thu</span>
-			<span class="text-right">Số dư</span>
-		</div>
-
-		<ul>
-			{#each visibleRows as row (row.date)}
-				<li
-					class="grid grid-cols-[2.7rem_1fr_1fr_1fr_1fr] items-center gap-2 border-b border-line px-4 py-2.5 last:border-0 text-sm"
-				>
-					<span class="font-display font-semibold">{row.day}</span>
-					<span class="font-display tabular-nums text-right text-muted">{formatMoney(row.limit)}</span>
-					<span class="tabular-nums text-right">{formatMoney(row.spent)}</span>
-					<span class="tabular-nums text-right {row.income > 0 ? 'text-surplus' : 'text-muted'}">
-						{row.income > 0 ? '+' + formatMoney(row.income) : '—'}
-					</span>
-					<span
-						class="font-display tabular-nums text-right font-semibold
-							{row.balance > 0 ? 'text-surplus' : row.balance < 0 ? 'text-deficit' : 'text-muted'}"
-					>
-						{formatSignedMoney(row.balance)}
-					</span>
-				</li>
-			{/each}
-		</ul>
-	</div>
+	<LedgerTable rows={visibleRows} label="Lịch sử chi tiêu" />
 
 	{#if visibleRows.length === 0}
 		<p class="mt-4 rounded-xl border border-dashed border-line bg-white/60 px-4 py-6 text-center text-sm text-muted">

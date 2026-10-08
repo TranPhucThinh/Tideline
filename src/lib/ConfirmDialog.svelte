@@ -26,13 +26,13 @@
 
 {#if open}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-5 backdrop-blur-sm"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-ink/35 p-5"
 		role="alertdialog"
 		aria-modal="true"
 		aria-label={title}
 	>
-		<div class="w-full max-w-[340px] rounded-2xl border border-line bg-white p-5 shadow-xl">
-			<h2 class="font-display text-lg font-bold">{title}</h2>
+		<div class="ui-dialog w-full max-w-[360px] p-6">
+			<h2 class="section-title">{title}</h2>
 			{#if message}
 				<p class="mt-2 text-sm leading-relaxed text-muted">{message}</p>
 			{/if}
@@ -41,7 +41,7 @@
 					type="button"
 					onclick={oncancel}
 					disabled={busy}
-					class="flex-1 rounded-xl border border-line bg-cream py-3 text-base font-semibold text-ink disabled:opacity-50"
+					class="ui-button ui-button-secondary flex-1"
 				>
 					{cancelLabel}
 				</button>
@@ -49,7 +49,7 @@
 					type="button"
 					onclick={onconfirm}
 					disabled={busy}
-					class="flex-1 rounded-xl py-3 text-base font-semibold text-white disabled:opacity-50 {danger ? 'bg-deficit' : 'bg-ink'}"
+					class="ui-button flex-1 {danger ? 'ui-button-danger' : 'ui-button-primary'}"
 				>
 					{confirmLabel}
 				</button>

@@ -85,7 +85,7 @@
 <!-- Modal overlay -->
 {#if isOpen}
 	<div
-		class="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 backdrop-blur-sm sm:items-center"
+		class="fixed inset-0 z-50 flex items-end justify-center bg-ink/35 sm:items-center"
 		role="dialog"
 		aria-modal="true"
 		aria-label="Hướng dẫn sử dụng"
@@ -96,12 +96,12 @@
 		}}
 	>
 		<div
-			class="mx-auto w-full max-w-[430px] rounded-t-3xl border border-line bg-cream p-6 shadow-xl sm:rounded-3xl"
+			class="ui-dialog rounded-b-none pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:rounded-panel mx-auto w-full max-w-[430px] px-6 pt-6"
 		>
 			<!-- Header: icon + step indicator -->
 			<div class="flex items-center justify-between">
 				{@render StepIcon({ name: current.icon })}
-				<span class="text-xs font-medium text-muted tabular-nums">
+				<span class="text-sm font-medium text-muted tabular-nums">
 					{index + 1} / {steps.length}
 				</span>
 			</div>
@@ -115,7 +115,7 @@
 				{/each}
 			</div>
 
-			<h2 class="font-display mt-4 text-xl font-bold">{current.title}</h2>
+			<h2 class="section-title mt-6">{current.title}</h2>
 			<p class="mt-2 text-sm leading-relaxed text-muted">{current.body}</p>
 
 			<!-- Footer buttons -->
@@ -124,7 +124,7 @@
 					<button
 						type="button"
 						onclick={() => (index -= 1)}
-						class="rounded-xl border border-line bg-white px-4 py-3 text-sm font-medium text-ink"
+						class="ui-button ui-button-secondary text-sm"
 					>
 						Quay lại
 					</button>
@@ -135,7 +135,7 @@
 				<button
 					type="button"
 					onclick={isLast ? close : next}
-					class="flex-1 rounded-xl bg-ink py-3 text-base font-semibold text-white"
+					class="ui-button ui-button-primary flex-1"
 				>
 					{isLast ? 'Bắt đầu dùng' : 'Tiếp theo'}
 				</button>

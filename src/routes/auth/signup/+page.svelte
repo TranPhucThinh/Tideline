@@ -11,10 +11,12 @@
 	let confirm = $state('');
 	let loading = $state(false);
 	let error = $state('');
+	let confirmationSent = $state(false);
 
 	async function signUp(e: SubmitEvent) {
 		e.preventDefault();
 		error = '';
+		confirmationSent = false;
 		if (!isSupabaseConfigured()) {
 			error = 'Chưa cấu hình Supabase.';
 			return;
@@ -41,6 +43,7 @@
 
 			if (!data.session) {
 				// Email confirmation được bật trong Supabase Auth -> cần xác nhận trước
+				confirmationSent = true;
 				error =
 					'Đã gửi email xác nhận. Vui lòng kiểm tra hộp thư và xác nhận tài khoản, rồi đăng nhập lại.';
 				return;
@@ -57,9 +60,9 @@
 	<title>Đăng ký — chi tiêu</title>
 </svelte:head>
 
-<div class="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col justify-center px-6">
+<div class="auth-layout">
 	<div class="mb-8">
-		<h1 class="font-display text-2xl font-bold">Tạo tài khoản</h1>
+		<h1 class="page-title">Tạo tài khoản</h1>
 		<p class="mt-1 text-sm text-muted">Bắt đầu kiểm soát chi tiêu hằng ngày ngay hôm nay.</p>
 	</div>
 
@@ -70,7 +73,7 @@
 	{/if}
 
 	{#if error}
-		<p class="rounded-xl bg-deficit-bg px-4 py-3 text-sm text-deficit">{error}</p>
+		<p role="status" class="mt-3 rounded-xl px-4 py-3 text-sm {confirmationSent ? 'bg-surplus-bg text-surplus' : 'bg-deficit-bg text-deficit'}">{error}</p>
 	{/if}
 
 	<form onsubmit={signUp} class="mt-4 space-y-4">
@@ -82,7 +85,7 @@
 				required
 				bind:value={email}
 				autocomplete="email"
-				class="mt-1 w-full rounded-xl border border-line bg-white px-4 py-3 text-base outline-none focus:border-ink"
+				class="mt-1 w-full border px-4 py-3 text-base ui-input"
 			/>
 		</div>
 		<div>
@@ -94,7 +97,7 @@
 				minlength="6"
 				bind:value={password}
 				autocomplete="new-password"
-				class="mt-1 w-full rounded-xl border border-line bg-white px-4 py-3 text-base outline-none focus:border-ink"
+				class="mt-1 w-full border px-4 py-3 text-base ui-input"
 			/>
 		</div>
 		<div>
@@ -106,13 +109,13 @@
 				minlength="6"
 				bind:value={confirm}
 				autocomplete="new-password"
-				class="mt-1 w-full rounded-xl border border-line bg-white px-4 py-3 text-base outline-none focus:border-ink"
+				class="mt-1 w-full border px-4 py-3 text-base ui-input"
 			/>
 		</div>
 		<button
 			type="submit"
 			disabled={loading}
-			class="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-base font-semibold text-white disabled:opacity-60"
+			class="ui-button ui-button-primary w-full"
 		>
 			{#if loading}
 				<Spinner color="white" size={18} />

@@ -243,43 +243,45 @@
 	<title>Hôm nay — chi tiêu & thu</title>
 </svelte:head>
 
-<p class="mb-3 text-xs font-medium text-muted">Vòng {boundLabel}</p>
+<p class="page-context mb-4">Vòng {boundLabel}</p>
+
+<div class="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:grid-rows-[min-content_1fr] md:items-start">
 
 <!-- Hero -->
 <section
-	class="rounded-2xl px-6 py-7 {isSurplus ? 'bg-surplus-bg' : 'bg-deficit-bg'}"
+	class="md:col-start-1 md:row-start-1 rounded-2xl px-5 py-6 md:p-6 {isSurplus ? 'bg-surplus-bg' : 'bg-deficit-bg'}"
 	aria-live="polite"
 >
 	<p class="text-sm font-medium {isSurplus ? 'text-surplus' : 'text-deficit'}">
 		{isSurplus ? 'Còn lại hôm nay' : 'Đã vượt hạn mức'}
 	</p>
 	<p
-		class="font-display mt-2 text-4xl font-bold tabular-nums {isSurplus ? 'text-surplus' : 'text-deficit'}"
+		class="money mt-2 text-[clamp(2rem,8vw,2.625rem)] font-semibold leading-[1.15] tracking-[-0.025em] [overflow-wrap:anywhere] {isSurplus ? 'text-surplus' : 'text-deficit'}"
 	>
 		{formatMoney(Math.abs(balance))}
 	</p>
 
 	{#if !isSurplus}
-		<p class="mt-1 text-sm opacity-80 {isSurplus ? '' : 'text-deficit'}">
+		<p class="mt-2 text-sm {isSurplus ? '' : 'text-deficit'}">
 			Vượt {formatMoney(Math.abs(balance))} so với hạn mức hôm nay
 		</p>
 	{/if}
 
 	<div
-		class="mt-4 flex items-center justify-between border-t pt-3 text-sm {isSurplus ? 'border-surplus/20 text-surplus' : 'border-deficit/25 text-deficit'}"
+		class="grid grid-cols-2 gap-4 mt-5 border-t pt-4 text-sm {isSurplus ? 'border-surplus/20 text-surplus' : 'border-deficit/25 text-deficit'}"
 	>
 		<span>
 			Hạn mức
-			<span class="font-semibold">{formatMoney(limitToday)}</span>
+			<span class="money mt-1 block font-semibold [overflow-wrap:anywhere]">{formatMoney(limitToday)}</span>
 		</span>
 		<span>
 			Đã chi
-			<span class="font-semibold">{formatMoney(spentToday)}</span>
+			<span class="money mt-1 block font-semibold [overflow-wrap:anywhere]">{formatMoney(spentToday)}</span>
 		</span>
 	</div>
 
 	{#if incomeToday > 0}
-		<div class="mt-1 flex items-center justify-between border-t pt-1.5 text-sm text-surplus">
+		<div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-surplus/20 pt-3 text-sm text-surplus">
 			<span>Thu hôm nay</span>
 			<span class="font-display font-semibold tabular-nums">+{formatMoney(incomeToday)}</span>
 		</div>
@@ -287,16 +289,16 @@
 </section>
 
 <!-- Form thêm khoản chi / thu -->
-<form onsubmit={addEntry} class="mt-5 rounded-2xl border border-line bg-white p-4 shadow-sm">
-	<h2 class="font-display text-base font-semibold">Thêm khoản</h2>
+<form onsubmit={addEntry} class="md:col-start-2 md:row-span-2 md:row-start-1 rounded-2xl border border-line bg-white p-5 md:p-6">
+	<h2 class="section-title">Thêm khoản</h2>
 
 	{#if formError}
 		<p class="mt-2 rounded-lg bg-deficit-bg px-3 py-2 text-sm text-deficit">{formError}</p>
 	{/if}
 
-	<div class="mt-3 space-y-3">
+	<div class="mt-4 space-y-4">
 		<!-- Bộ chọn khoản chi vs khoản thu -->
-		<div class="grid grid-cols-2 overflow-hidden rounded-xl border border-line bg-cream p-1" role="tablist">
+		<div class="ui-segment grid-cols-2" role="tablist">
 			{#each (['expense', 'income'] as const) as t}
 				<button
 					role="tab"
@@ -330,13 +332,13 @@
 				type="text"
 				placeholder={entryType === 'expense' ? 'Ví dụ: cà phê sáng' : 'Ví dụ: lương'}
 				bind:value={noteInput}
-				class="mt-1 w-full rounded-xl border border-line bg-cream px-4 py-3 text-base outline-none focus:border-ink"
+				class="mt-1 w-full border px-4 py-3 text-base ui-input"
 			/>
 		</div>
 		<button
 			type="submit"
 			disabled={submitting}
-			class="w-full rounded-xl bg-ink py-3 text-base font-semibold text-white transition-opacity disabled:opacity-50"
+			class="w-full ui-button ui-button-primary"
 		>
 			{submitting
 				? 'Đang lưu…'
@@ -348,8 +350,8 @@
 </form>
 
 <!-- Danh sách khoản chi & thu cho ngày đang chọn -->
-<section class="mt-6">
-	<h2 class="font-display text-base font-semibold">Khoản {selectedDateLabel}</h2>
+<section class="min-w-0 md:col-start-1 md:row-start-2">
+	<h2 class="section-title">Khoản {selectedDateLabel}</h2>
 
 	{#if selectedExpenses.length === 0 && selectedIncomes.length === 0}
 		<p class="mt-3 rounded-xl border border-dashed border-line bg-white/60 px-4 py-6 text-center text-sm text-muted">
@@ -368,6 +370,8 @@
 		</ul>
 	{/if}
 </section>
+
+</div>
 
 <!-- Hộp diálogo xác nhân xoá -->
 <ConfirmDialog
@@ -412,7 +416,7 @@
 					type="text"
 					placeholder="Ví dụ: cà phê sáng"
 					bind:value={editNote}
-					class="mt-1 w-full rounded-xl border border-line bg-cream px-3 py-2 text-base outline-none focus:border-ink"
+					class="mt-1 w-full border px-3 py-2 text-base ui-input"
 				/>
 			</div>
 			<div class="mt-3 flex gap-2">
@@ -420,7 +424,7 @@
 					type="button"
 					onclick={() => saveEdit(type, exp)}
 					disabled={savingId === exp.id}
-					class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-ink py-2.5 text-base font-semibold text-white disabled:opacity-50"
+					class="ui-button ui-button-primary flex-1"
 				>
 					{#if savingId === exp.id}
 						<Spinner color="white" size={16} />
@@ -433,7 +437,7 @@
 					type="button"
 					onclick={cancelEdit}
 					disabled={savingId === exp.id}
-					class="flex-1 rounded-xl border border-line bg-cream py-2.5 text-base font-semibold text-ink disabled:opacity-50"
+					class="ui-button ui-button-secondary flex-1"
 				>
 					Huỷ
 				</button>
@@ -444,7 +448,7 @@
 				<button
 					type="button"
 					onclick={() => startEdit(type, exp)}
-					class="min-w-0 flex-1 text-left"
+					class="min-w-0 flex-1 rounded-lg text-left"
 					aria-label={`Sửa khoản ${typeLabel}`}
 				>
 					<p class="truncate text-sm">
@@ -453,7 +457,7 @@
 							· {exp.note}
 						{/if}
 					</p>
-					<p class="font-display text-base font-semibold tabular-nums {isIncome ? 'text-surplus' : ''}">
+					<p class="money text-base font-semibold {isIncome ? 'text-surplus' : ''}">
 						{isIncome ? '+' : ''}{formatMoney(exp.amount)}
 					</p>
 				</button>
@@ -462,7 +466,7 @@
 						type="button"
 						onclick={() => startEdit(type, exp)}
 						aria-label={`Sửa khoản ${typeLabel}`}
-						class="rounded-lg px-2 py-1 text-muted transition-colors hover:bg-cream hover:text-ink"
+						class="flex h-11 w-11 items-center justify-center rounded-lg text-muted transition-colors hover:bg-canvas hover:text-ink"
 					>
 						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 							<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -474,7 +478,7 @@
 						onclick={() => requestRemove(type, exp)}
 						aria-label={`Xoá khoản ${typeLabel}`}
 						disabled={deletingId === exp.id}
-						class="rounded-lg px-2 py-1 transition-colors {deletingId === exp.id ? 'cursor-wait opacity-60' : 'text-muted hover:bg-deficit-bg hover:text-deficit'}"
+						class="flex h-11 w-11 items-center justify-center rounded-lg transition-colors {deletingId === exp.id ? 'cursor-wait opacity-60' : 'text-muted hover:bg-deficit-bg hover:text-deficit'}"
 					>
 						{#if deletingId === exp.id}
 							<Spinner color="deficit" size={18} />

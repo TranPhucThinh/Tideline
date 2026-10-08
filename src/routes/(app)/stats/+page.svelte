@@ -13,6 +13,7 @@
 	import { createLimitLookups } from '$lib/settings';
 	import type { LimitSetting } from '$lib/types';
 	import Chart from 'chart.js/auto';
+	import LedgerTable from '$lib/LedgerTable.svelte';
 
 	let { data } = $props();
 
@@ -173,6 +174,14 @@
 		const metric = chartMetric;
 		const values = metric === 'balance' ? balance : spent;
 
+		const theme = getComputedStyle(document.documentElement);
+		const ink = theme.getPropertyValue('--color-ink').trim();
+		const surplus = theme.getPropertyValue('--color-surplus').trim();
+		const deficit = theme.getPropertyValue('--color-deficit').trim();
+		const muted = theme.getPropertyValue('--color-muted').trim();
+		const line = theme.getPropertyValue('--color-line').trim();
+		const chartFont = { family: theme.getPropertyValue('--font-sans').trim(), size: 12 };
+
 		if (chart) chart.destroy();
 
 		chart = new Chart(canvas, {
@@ -184,9 +193,9 @@
 						label: metric === 'balance' ? 'Số dư (đ)' : 'Đã chi (đ)',
 						data: values,
 						backgroundColor: (context) => {
-							if (metric !== 'balance') return '#16302B';
+							if (metric !== 'balance') return ink;
 							const v = context.raw as number;
-							return v < 0 ? '#C1553D' : v > 0 ? '#2F7A5E' : '#E2DDD5';
+							return v < 0 ? deficit : v > 0 ? surplus : line;
 						},
 						borderRadius: 4
 					}
@@ -198,6 +207,9 @@
 				plugins: {
 					legend: { display: false },
 					tooltip: {
+						backgroundColor: ink,
+						bodyFont: chartFont,
+						titleFont: chartFont,
 						callbacks: {
 							title: (items) => {
 								const i = items[0]?.dataIndex;
@@ -211,8 +223,10 @@
 					}
 				},
 				scales: {
+					x: { ticks: { font: chartFont, color: muted }, grid: { display: false } },
 					y: {
-						ticks: { callback: (value) => formatMoney(Number(value)) }
+						grid: { color: line },
+						ticks: { font: chartFont, color: muted, callback: (value) => formatMoney(Number(value)) }
 					}
 				}
 			}
@@ -236,17 +250,17 @@
 </svelte:head>
 
 <!-- Tiêu đề + chuyển vòng -->
-<div class="mb-5">
-	<h1 class="font-display text-xl font-bold">Thống kê</h1>
-	<p class="mt-0.5 text-xs text-muted">Vòng {header}</p>
-	<div class="mt-3 flex items-center justify-between gap-3">
-		<button onclick={() => goCycle(-1)} class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium">
+<div class="mb-6">
+	<h1 class="page-title">Thống kê</h1>
+	<p class="page-context mt-2">Vòng {header}</p>
+	<div class="cycle-controls">
+		<button onclick={() => goCycle(-1)} class="ui-button ui-button-secondary text-sm">
 			&larr; Vòng trước
 		</button>
 		<button
 			onclick={() => goCycle(1)}
 			disabled={isCurrent}
-			class="rounded-xl border border-line bg-white px-4 py-2 text-sm font-medium disabled:opacity-40"
+			class="ui-button ui-button-secondary text-sm"
 		>
 			Vòng sau &rarr;
 		</button>
@@ -254,7 +268,7 @@
 </div>
 
 <!-- Bộ chọn view -->
-<div class="mb-4 grid grid-cols-3 overflow-hidden rounded-xl border border-line bg-white p-1" role="tablist">
+<div class="ui-segment mb-6 max-w-md grid-cols-3" role="tablist">
 	{#each (['summary', 'chart', 'list'] as const) as v}
 		<button
 			role="tab"
@@ -273,18 +287,26 @@
 			Vòng này chưa có dữ liệu.
 		</p>
 	{:else}
-		<div class="grid grid-cols-2 gap-3">
-			{@render StatCard({ label: 'Tổng đã chi', value: formatMoney(summary.totalSpent) })}
-			{@render StatCard({ label: 'Tổng thu', value: '+' + formatMoney(summary.totalIncome), accent: 'surplus' })}
-			{@render StatCard({ label: 'Trung bình / ngày', value: formatMoney(summary.avgSpend) })}
-			{@render StatCard({ label: 'Ngày vượt hạn mức', value: `${summary.daysOver}/${summary.nDays}`, accent: summary.daysOver > 0 ? 'deficit' : 'normal' })}
-			{@render StatCard({ label: 'Ngày tiết kiệm', value: `${summary.daysSurplus}/${summary.nDays}`, accent: 'surplus' })}
-			{@render StatCard({ label: summary.deficit > 0 ? 'Còn thiếu cuối kỳ' : 'Tiết kiệm cuối kỳ', value: formatMoney(summary.deficit > 0 ? summary.deficit : summary.saved), accent: summary.deficit > 0 ? 'deficit' : 'surplus' })}
-			{@render StatCard({ label: 'Số dư cuối kỳ', value: formatSignedMoney(summary.endBalance), accent: summary.endBalance < 0 ? 'deficit' : summary.endBalance > 0 ? 'surplus' : 'normal' })}
+		<div class="grid gap-4 md:grid-cols-2">
+			<div class="min-w-0 rounded-panel p-5 {summary.endBalance < 0 ? 'bg-deficit-bg text-deficit' : 'bg-surplus-bg text-surplus'}">
+				<p class="text-sm font-medium">Số dư cuối kỳ</p>
+				<p class="money mt-2 text-[clamp(1.75rem,6vw,2.25rem)] font-semibold leading-[1.2] tracking-[-0.025em] [overflow-wrap:anywhere]">{formatSignedMoney(summary.endBalance)}</p>
+			</div>
+			<div class="min-w-0 rounded-panel border border-line bg-white p-5">
+				<p class="text-sm font-medium text-muted">Tổng đã chi</p>
+				<p class="money mt-2 text-[clamp(1.75rem,6vw,2.25rem)] font-semibold leading-[1.2] tracking-[-0.025em] [overflow-wrap:anywhere]">{formatMoney(summary.totalSpent)}</p>
+			</div>
 		</div>
+		<dl class="mt-6 border-t border-line">
+			{@render StatDetail({ label: 'Tổng thu', value: '+' + formatMoney(summary.totalIncome), accent: 'surplus' })}
+			{@render StatDetail({ label: 'Trung bình / ngày', value: formatMoney(summary.avgSpend) })}
+			{@render StatDetail({ label: 'Ngày vượt hạn mức', value: `${summary.daysOver}/${summary.nDays}`, accent: summary.daysOver > 0 ? 'deficit' : 'normal' })}
+			{@render StatDetail({ label: 'Ngày tiết kiệm', value: `${summary.daysSurplus}/${summary.nDays}`, accent: 'surplus' })}
+			{@render StatDetail({ label: summary.deficit > 0 ? 'Còn thiếu cuối kỳ' : 'Tiết kiệm cuối kỳ', value: formatMoney(summary.deficit > 0 ? summary.deficit : summary.saved), accent: summary.deficit > 0 ? 'deficit' : 'surplus' })}
+		</dl>
 
-		<div class="mt-3 rounded-2xl border border-line bg-white p-4">
-			<h2 class="font-display text-base font-semibold">Cao điểm</h2>
+		<div class="mt-6 border-t border-line pt-6">
+			<h2 class="section-title">Cao điểm</h2>
 			<ul class="mt-2 space-y-1.5 text-sm text-muted">
 				<li>
 					Ngày chi nhiều nhất:
@@ -300,17 +322,18 @@
 		</div>
 	{/if}
 {:else if view === 'chart'}
-	<div class="rounded-2xl border border-line bg-white p-4">
+	<div class="rounded-2xl border border-line bg-white p-5 md:p-6">
 		<div class="mb-3">
-			<div class="flex items-center justify-between">
-				<h2 class="font-display text-base font-semibold">
+			<div class="flex flex-wrap items-center justify-between gap-3">
+				<h2 class="section-title">
 					Biểu đồ {granularity === 'day' ? 'hàng ngày' : granularity === 'week' ? 'theo tuần' : 'theo tháng'}
 				</h2>
-				<div class="flex overflow-hidden rounded-lg border border-line">
+				<div class="ui-segment grid-cols-2">
 					{#each chartMetrics as m}
 						<button
 							onclick={() => (chartMetric = m.id)}
-							class="px-3 py-1.5 text-xs font-medium transition-colors {chartMetric === m.id ? 'bg-ink text-white' : 'bg-white text-muted'}"
+							aria-pressed={chartMetric === m.id}
+							class="transition-colors {chartMetric === m.id ? 'bg-ink text-white' : 'text-muted hover:text-ink'}"
 						>
 							{m.label}
 						</button>
@@ -318,11 +341,12 @@
 				</div>
 			</div>
 			<!-- Bộ chọn mức gom (ngày / tuần / tháng) -->
-			<div class="mt-2 grid grid-cols-3 gap-1 rounded-xl border border-line bg-cream p-1">
+			<div class="ui-segment mt-4 grid-cols-3">
 				{#each granularities as g}
 					<button
 						onclick={() => (granularity = g.id)}
-						class="rounded-lg py-1.5 text-xs font-medium transition-colors {granularity === g.id ? 'bg-ink text-white' : 'text-muted hover:text-ink'}"
+						aria-pressed={granularity === g.id}
+						class="rounded-lg py-2 text-sm font-medium transition-colors {granularity === g.id ? 'bg-ink text-white' : 'text-muted hover:text-ink'}"
 					>
 						{g.label}
 					</button>
@@ -334,42 +358,17 @@
 		</div>
 	</div>
 {:else}
-	<div class="rounded-2xl border border-line bg-white">
-		<div class="grid grid-cols-[3rem_1fr_1fr_1fr_1fr] gap-2 border-b border-line px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted">
-			<span>Ngày</span>
-			<span class="text-right">Hạn mức</span>
-			<span class="text-right">Đã chi</span>
-			<span class="text-right">Thu</span>
-			<span class="text-right">Số dư</span>
-		</div>
-		<ul>
-			{#each visibleRows as row (row.date)}
-				<li class="grid grid-cols-[3rem_1fr_1fr_1fr_1fr] items-center gap-2 border-b border-line px-4 py-2.5 text-sm last:border-0">
-					<span class="font-display font-semibold">N{row.cycleDay}</span>
-					<span class="font-display tabular-nums text-right text-muted">{formatMoney(row.limit)}</span>
-					<span class="tabular-nums text-right">{formatMoney(row.spent)}</span>
-					<span class="tabular-nums text-right {row.income > 0 ? 'text-surplus' : 'text-muted'}">
-						{row.income > 0 ? '+' + formatMoney(row.income) : '—'}
-					</span>
-					<span class="font-display tabular-nums text-right font-semibold {row.balance > 0 ? 'text-surplus' : row.balance < 0 ? 'text-deficit' : 'text-muted'}">
-						{formatSignedMoney(row.balance)}
-					</span>
-				</li>
-			{/each}
-		</ul>
-	</div>
+	<LedgerTable rows={visibleRows} cycleDays label="Thống kê chi tiêu" />
 {/if}
 
 {#if isCurrent}
-	<p class="mt-4 text-xs text-muted">Đang hiển thị đến ngày hôm nay.</p>
+	<p class="page-context mt-6">Đang hiển thị đến ngày hôm nay.</p>
 {/if}
 
-{#snippet StatCard(opts: { label: string; value: string; accent?: 'normal' | 'surplus' | 'deficit' })}
+{#snippet StatDetail(opts: { label: string; value: string; accent?: 'normal' | 'surplus' | 'deficit' })}
 	{@const { label, value, accent = 'normal' } = opts}
-	<div class="rounded-2xl border border-line bg-white p-4">
-		<p class="text-xs font-medium text-muted">{label}</p>
-		<p class="font-display mt-1 text-xl font-bold tabular-nums {accent === 'surplus' ? 'text-surplus' : accent === 'deficit' ? 'text-deficit' : 'text-ink'}">
-			{value}
-		</p>
+	<div class="flex items-baseline justify-between gap-4 border-b border-line py-4">
+		<dt class="text-sm text-muted">{label}</dt>
+		<dd class="money min-w-0 text-right font-semibold [overflow-wrap:anywhere] {accent === 'surplus' ? 'text-surplus' : accent === 'deficit' ? 'text-deficit' : 'text-ink'}">{value}</dd>
 	</div>
 {/snippet}
