@@ -85,7 +85,8 @@
 
 <!-- Bảng chi tiết từng ngày -->
 <section>
-	<LedgerTable rows={visibleRows} label="Lịch sử chi tiêu" />
+	<p class="mb-2 text-xs text-muted md:hidden">Vuốt ngang để xem đủ các cột.</p>
+	<LedgerTable rows={visibleRows} compactRows label="Lịch sử chi tiêu" />
 
 	{#if visibleRows.length === 0}
 		<p class="mt-4 rounded-xl border border-dashed border-line bg-white/60 px-4 py-6 text-center text-sm text-muted">

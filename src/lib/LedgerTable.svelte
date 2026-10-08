@@ -2,14 +2,15 @@
 	import type { CycleLedgerRow } from '$lib/cycle';
 	import { formatMoney, formatSignedMoney } from '$lib/money';
 
-	let { rows, cycleDays = false, label }: {
+	let { rows, cycleDays = false, compactRows = false, label }: {
 		rows: CycleLedgerRow[];
 		cycleDays?: boolean;
+		compactRows?: boolean;
 		label: string;
 	} = $props();
 </script>
 
-<div class="ledger-surface">
+<div class="ledger-surface" class:compact-rows={compactRows}>
 	<table class="ledger-table" aria-label={label}>
 		<thead>
 			<tr>
@@ -64,6 +65,32 @@
 	td { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
 	.mobile-label { color: var(--color-muted); font-size: 0.875rem; font-weight: 400; }
 	.money { overflow-wrap: anywhere; }
+	.compact-rows { overflow-x: auto; }
+	@media (max-width: 47.999rem) {
+		.compact-rows .ledger-table { min-width: 40rem; }
+		.compact-rows thead {
+			position: static;
+			width: auto;
+			height: auto;
+			overflow: visible;
+			clip-path: none;
+			white-space: normal;
+			background: var(--color-canvas);
+		}
+		.compact-rows tbody { display: table-row-group; }
+		.compact-rows tbody tr { display: table-row; }
+		.compact-rows th, .compact-rows td {
+			padding: 0.75rem;
+			text-align: right;
+			white-space: nowrap;
+			border-bottom: 1px solid var(--color-line);
+		}
+		.compact-rows thead th { color: var(--color-muted); font-weight: 500; }
+		.compact-rows th:first-child { position: sticky; left: 0; text-align: left; background: var(--color-white); }
+		.compact-rows thead th:first-child { background: var(--color-canvas); }
+		.compact-rows td { display: table-cell; }
+		.compact-rows .mobile-label { display: none; }
+	}
 	@media (min-width: 48rem) {
 		thead {
 			position: static;
