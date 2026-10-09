@@ -88,7 +88,7 @@
 	<header class="flex items-center justify-between gap-4 px-5 pt-4 md:border-b md:border-line md:px-8 md:py-6">
 		<div>
 			<span class="font-display text-lg font-semibold">Tideline</span>
-			<span class="sr-only">Giao diện {visualStyle === 'modern' ? 'hiện tại' : 'sổ tay'}, theme {activeTheme}</span>
+			<span class="sr-only">Giao diện {visualStyle === 'modern' ? 'hiện tại' : 'nổi mềm'}, theme {activeTheme}</span>
 		</div>
 		<nav class="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-canvas pb-[env(safe-area-inset-bottom)] md:static md:ml-auto md:border-0 md:bg-transparent md:p-0" aria-label="Điều hướng chính">
 			<div class="mx-auto grid max-w-[30rem] grid-cols-4 gap-1 p-2 md:flex md:max-w-none md:p-0">
@@ -108,7 +108,7 @@
 			}}
 			aria-label="Mở hướng dẫn sử dụng"
 			disabled={saving}
-			class="flex h-11 w-11 shrink-0 items-center justify-center rounded-control border border-line bg-white font-semibold transition-colors hover:enabled:bg-surplus-bg"
+			class="app-help flex h-11 w-11 shrink-0 items-center justify-center rounded-control border border-line bg-white font-semibold transition-colors hover:enabled:bg-surplus-bg"
 		>?</button>
 	</header>
 	<main class="px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:px-8 md:pt-8 md:pb-12">

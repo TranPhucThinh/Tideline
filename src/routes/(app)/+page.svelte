@@ -249,7 +249,7 @@
 
 <!-- Hero -->
 <section
-	class="md:col-start-1 md:row-start-1 rounded-2xl px-5 py-6 md:p-6 {isSurplus ? 'bg-surplus-bg' : 'bg-deficit-bg'}"
+	class="balance-surface md:col-start-1 md:row-start-1 rounded-2xl px-5 py-6 md:p-6 {isSurplus ? 'bg-surplus-bg' : 'bg-deficit-bg'}"
 	aria-live="polite"
 >
 	<p class="text-sm font-medium {isSurplus ? 'text-surplus' : 'text-deficit'}">
@@ -393,7 +393,7 @@
 	{@const isIncome = type === 'income'}
 	{@const typeLabel = isIncome ? 'Thu' : 'Chi'}
 	<li
-		class="rounded-xl border border-line bg-white px-4 py-3 {isEditing ? 'ring-2 ring-ink/20' : ''}"
+		class="entry-surface rounded-xl border border-line bg-white px-4 py-3 {isEditing ? 'ring-2 ring-ink/20' : ''}"
 	>
 		{#if isEditing}
 			<!-- Form sửa khoản chi/thu -->

@@ -98,7 +98,7 @@ T('theme: account cycle starts at theme 1', themeIndexForCycle('2026-07-21', '20
 T('theme: next cycle advances once', themeIndexForCycle('2026-08-21', '2026-07-21') === 1);
 T('theme: fifth cycle returns to theme 1', themeIndexForCycle('2026-11-21', '2026-07-21') === 0);
 T('theme: account created mid-cycle starts at theme 1', themeIndexForCycle(cycleOf('2026-08-15', 21).start, cycleOf('2026-08-15', 21).start) === 0);
-T('theme: same index selects a theme in either style', themeName('skeuomorphic', 1) === 'Đồng thau' && themeName('modern', 1) === 'Dawn');
+T('theme: same index selects a theme in either style', themeName('skeuomorphic', 1) === 'Cát ấm' && themeName('modern', 1) === 'Dawn');
 
 console.log(fail === 0 ? '\nALL PASS' : `\n${fail} FAILED`);
 process.exit(fail === 0 ? 0 : 1);

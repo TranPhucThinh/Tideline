@@ -55,7 +55,7 @@ Mọi tính toán dùng timezone nghiệp vụ **Asia/Ho_Chi_Minh**, không ph�
 
 ## Giao diện theo vòng chi tiêu
 
-Trong **Cài đặt → Giao diện**, người dùng chọn một trong hai style: **Hiện tại** hoặc **Sổ tay** (skeuomorphic). Mỗi style có bốn theme; theme tự chuyển khi vòng chi tiêu mới bắt đầu và lặp lại sau bốn vòng. Theme đầu tiên được neo vào vòng chứa ngày tạo tài khoản, nên cùng tài khoản luôn thấy cùng theme trên các thiết bị. Style được lưu trong `profiles.visual_style`; với database đã tồn tại, cần chạy migration `008_visual_style.sql` để lưu lựa chọn.
+Trong **Cài đặt → Giao diện**, người dùng chọn một trong hai style: **Hiện tại** hoặc **Nổi mềm** (skeuomorphic/soft UI). Nổi mềm dùng bề mặt pastel, bóng nổi và lõm, cùng điểm nhấn san hô; bốn theme là Sương xanh, Cát ấm, Ngọc dịu và Hồng phấn. Mỗi style có bốn theme; theme tự chuyển khi vòng chi tiêu mới bắt đầu và lặp lại sau bốn vòng. Theme đầu tiên được neo vào vòng chứa ngày tạo tài khoản, nên cùng tài khoản luôn thấy cùng theme trên các thiết bị. Style được lưu trong `profiles.visual_style`; với database đã tồn tại, cần chạy migration `008_visual_style.sql` để lưu lựa chọn.
 
 ## Cấu trúc dự án
 

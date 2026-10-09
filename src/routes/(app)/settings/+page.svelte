@@ -109,8 +109,11 @@
 	<form
 		method="POST"
 		action="?/updateVisualStyle"
-		onsubmit={() => (savingStyle = true)}
-		use:enhance={() => async ({ result }) => onStyleSubmit(result)}
+		use:enhance={() => {
+			// enhance đã đọc FormData trước callback này; khóa lựa chọn sau đó.
+			savingStyle = true;
+			return async ({ result }) => onStyleSubmit(result);
+		}}
 		class="mt-4"
 	>
 		{#if styleMsg}
@@ -132,11 +135,11 @@
 				<label class="appearance-choice" class:appearance-choice-selected={selectedStyle === 'skeuomorphic'}>
 					<input type="radio" name="visualStyle" value="skeuomorphic" bind:group={selectedStyle} />
 					<span class="appearance-choice-content">
-						<span class="appearance-choice-title">Sổ tay</span>
-						<span class="appearance-choice-desc">Bề mặt giấy, nét mực và nút bấm có chiều sâu.</span>
+						<span class="appearance-choice-title">Nổi mềm</span>
+						<span class="appearance-choice-desc">Bề mặt pastel, bóng nổi mềm và nút bấm lõm nhẹ.</span>
 						<span class="appearance-sample appearance-sample-skeuo" aria-hidden="true"><span>Còn lại hôm nay</span><strong>100.000 đ</strong></span>
 						<span class="appearance-swatches" aria-hidden="true"><i class="swatch-skeuo-0"></i><i class="swatch-skeuo-1"></i><i class="swatch-skeuo-2"></i><i class="swatch-skeuo-3"></i></span>
-						<span class="appearance-choice-names">Sổ thu chi · Đồng thau · Men biển · Đất nung</span>
+						<span class="appearance-choice-names">Sương xanh · Cát ấm · Ngọc dịu · Hồng phấn</span>
 					</span>
 				</label>
 			</div>

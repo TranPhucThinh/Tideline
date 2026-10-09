@@ -1,53 +1,1046 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-08T00:00:00.000Z",
+  "generatedAt": "2026-10-09T07:50:28.260Z",
   "title": "Design System: Tideline",
   "extensions": {
+    "colorMeta": {
+      "tide-canvas": {
+        "role": "neutral",
+        "displayName": "tide canvas",
+        "tonalRamp": [
+          "oklch(0.1500 0.00587 239.82)",
+          "oklch(0.2643 0.00587 239.82)",
+          "oklch(0.3786 0.00587 239.82)",
+          "oklch(0.4929 0.00587 239.82)",
+          "oklch(0.6071 0.00587 239.82)",
+          "oklch(0.7214 0.00587 239.82)",
+          "oklch(0.8357 0.00587 239.82)",
+          "oklch(0.9500 0.00587 239.82)"
+        ]
+      },
+      "tide-surface": {
+        "role": "neutral",
+        "displayName": "tide surface",
+        "tonalRamp": [
+          "oklch(0.1500 0.00000 0.00)",
+          "oklch(0.2643 0.00000 0.00)",
+          "oklch(0.3786 0.00000 0.00)",
+          "oklch(0.4929 0.00000 0.00)",
+          "oklch(0.6071 0.00000 0.00)",
+          "oklch(0.7214 0.00000 0.00)",
+          "oklch(0.8357 0.00000 0.00)",
+          "oklch(0.9500 0.00000 0.00)"
+        ]
+      },
+      "tide-ink": {
+        "role": "neutral",
+        "displayName": "tide ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.05905 251.54)",
+          "oklch(0.2643 0.05905 251.54)",
+          "oklch(0.3786 0.05905 251.54)",
+          "oklch(0.4929 0.05905 251.54)",
+          "oklch(0.6071 0.05905 251.54)",
+          "oklch(0.7214 0.05905 251.54)",
+          "oklch(0.8357 0.05905 251.54)",
+          "oklch(0.9500 0.05905 251.54)"
+        ]
+      },
+      "tide-muted": {
+        "role": "neutral",
+        "displayName": "tide muted",
+        "tonalRamp": [
+          "oklch(0.1500 0.03880 247.26)",
+          "oklch(0.2643 0.03880 247.26)",
+          "oklch(0.3786 0.03880 247.26)",
+          "oklch(0.4929 0.03880 247.26)",
+          "oklch(0.6071 0.03880 247.26)",
+          "oklch(0.7214 0.03880 247.26)",
+          "oklch(0.8357 0.03880 247.26)",
+          "oklch(0.9500 0.03880 247.26)"
+        ]
+      },
+      "tide-line": {
+        "role": "neutral",
+        "displayName": "tide line",
+        "tonalRamp": [
+          "oklch(0.1500 0.01363 240.97)",
+          "oklch(0.2643 0.01363 240.97)",
+          "oklch(0.3786 0.01363 240.97)",
+          "oklch(0.4929 0.01363 240.97)",
+          "oklch(0.6071 0.01363 240.97)",
+          "oklch(0.7214 0.01363 240.97)",
+          "oklch(0.8357 0.01363 240.97)",
+          "oklch(0.9500 0.01363 240.97)"
+        ]
+      },
+      "tide-input-line": {
+        "role": "neutral",
+        "displayName": "tide input line",
+        "tonalRamp": [
+          "oklch(0.1500 0.03160 245.12)",
+          "oklch(0.2643 0.03160 245.12)",
+          "oklch(0.3786 0.03160 245.12)",
+          "oklch(0.4929 0.03160 245.12)",
+          "oklch(0.6071 0.03160 245.12)",
+          "oklch(0.7214 0.03160 245.12)",
+          "oklch(0.8357 0.03160 245.12)",
+          "oklch(0.9500 0.03160 245.12)"
+        ]
+      },
+      "tide-surplus": {
+        "role": "semantic",
+        "displayName": "tide surplus",
+        "tonalRamp": [
+          "oklch(0.1500 0.08437 185.20)",
+          "oklch(0.2643 0.08437 185.20)",
+          "oklch(0.3786 0.08437 185.20)",
+          "oklch(0.4929 0.08437 185.20)",
+          "oklch(0.6071 0.08437 185.20)",
+          "oklch(0.7214 0.08437 185.20)",
+          "oklch(0.8357 0.08437 185.20)",
+          "oklch(0.9500 0.08437 185.20)"
+        ]
+      },
+      "tide-surplus-bg": {
+        "role": "semantic",
+        "displayName": "tide surplus bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.01737 183.53)",
+          "oklch(0.2643 0.01737 183.53)",
+          "oklch(0.3786 0.01737 183.53)",
+          "oklch(0.4929 0.01737 183.53)",
+          "oklch(0.6071 0.01737 183.53)",
+          "oklch(0.7214 0.01737 183.53)",
+          "oklch(0.8357 0.01737 183.53)",
+          "oklch(0.9500 0.01737 183.53)"
+        ]
+      },
+      "tide-deficit": {
+        "role": "semantic",
+        "displayName": "tide deficit",
+        "tonalRamp": [
+          "oklch(0.1500 0.13191 13.73)",
+          "oklch(0.2643 0.13191 13.73)",
+          "oklch(0.3786 0.13191 13.73)",
+          "oklch(0.4929 0.13191 13.73)",
+          "oklch(0.6071 0.13191 13.73)",
+          "oklch(0.7214 0.13191 13.73)",
+          "oklch(0.8357 0.13191 13.73)",
+          "oklch(0.9500 0.13191 13.73)"
+        ]
+      },
+      "tide-deficit-bg": {
+        "role": "semantic",
+        "displayName": "tide deficit bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.01674 3.66)",
+          "oklch(0.2643 0.01674 3.66)",
+          "oklch(0.3786 0.01674 3.66)",
+          "oklch(0.4929 0.01674 3.66)",
+          "oklch(0.6071 0.01674 3.66)",
+          "oklch(0.7214 0.01674 3.66)",
+          "oklch(0.8357 0.01674 3.66)",
+          "oklch(0.9500 0.01674 3.66)"
+        ]
+      },
+      "dawn-canvas": {
+        "role": "neutral",
+        "displayName": "dawn canvas",
+        "tonalRamp": [
+          "oklch(0.1500 0.01190 79.78)",
+          "oklch(0.2643 0.01190 79.78)",
+          "oklch(0.3786 0.01190 79.78)",
+          "oklch(0.4929 0.01190 79.78)",
+          "oklch(0.6071 0.01190 79.78)",
+          "oklch(0.7214 0.01190 79.78)",
+          "oklch(0.8357 0.01190 79.78)",
+          "oklch(0.9500 0.01190 79.78)"
+        ]
+      },
+      "dawn-ink": {
+        "role": "neutral",
+        "displayName": "dawn ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.03452 49.98)",
+          "oklch(0.2643 0.03452 49.98)",
+          "oklch(0.3786 0.03452 49.98)",
+          "oklch(0.4929 0.03452 49.98)",
+          "oklch(0.6071 0.03452 49.98)",
+          "oklch(0.7214 0.03452 49.98)",
+          "oklch(0.8357 0.03452 49.98)",
+          "oklch(0.9500 0.03452 49.98)"
+        ]
+      },
+      "slate-canvas": {
+        "role": "neutral",
+        "displayName": "slate canvas",
+        "tonalRamp": [
+          "oklch(0.1500 0.00449 214.33)",
+          "oklch(0.2643 0.00449 214.33)",
+          "oklch(0.3786 0.00449 214.33)",
+          "oklch(0.4929 0.00449 214.33)",
+          "oklch(0.6071 0.00449 214.33)",
+          "oklch(0.7214 0.00449 214.33)",
+          "oklch(0.8357 0.00449 214.33)",
+          "oklch(0.9500 0.00449 214.33)"
+        ]
+      },
+      "slate-ink": {
+        "role": "neutral",
+        "displayName": "slate ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.03173 229.21)",
+          "oklch(0.2643 0.03173 229.21)",
+          "oklch(0.3786 0.03173 229.21)",
+          "oklch(0.4929 0.03173 229.21)",
+          "oklch(0.6071 0.03173 229.21)",
+          "oklch(0.7214 0.03173 229.21)",
+          "oklch(0.8357 0.03173 229.21)",
+          "oklch(0.9500 0.03173 229.21)"
+        ]
+      },
+      "bloom-canvas": {
+        "role": "neutral",
+        "displayName": "bloom canvas",
+        "tonalRamp": [
+          "oklch(0.1500 0.00784 319.45)",
+          "oklch(0.2643 0.00784 319.45)",
+          "oklch(0.3786 0.00784 319.45)",
+          "oklch(0.4929 0.00784 319.45)",
+          "oklch(0.6071 0.00784 319.45)",
+          "oklch(0.7214 0.00784 319.45)",
+          "oklch(0.8357 0.00784 319.45)",
+          "oklch(0.9500 0.00784 319.45)"
+        ]
+      },
+      "bloom-ink": {
+        "role": "neutral",
+        "displayName": "bloom ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.04595 309.67)",
+          "oklch(0.2643 0.04595 309.67)",
+          "oklch(0.3786 0.04595 309.67)",
+          "oklch(0.4929 0.04595 309.67)",
+          "oklch(0.6071 0.04595 309.67)",
+          "oklch(0.7214 0.04595 309.67)",
+          "oklch(0.8357 0.04595 309.67)",
+          "oklch(0.9500 0.04595 309.67)"
+        ]
+      },
+      "soft-coral": {
+        "role": "primary",
+        "displayName": "soft coral",
+        "tonalRamp": [
+          "oklch(0.1500 0.11786 34.12)",
+          "oklch(0.2643 0.11786 34.12)",
+          "oklch(0.3786 0.11786 34.12)",
+          "oklch(0.4929 0.11786 34.12)",
+          "oklch(0.6071 0.11786 34.12)",
+          "oklch(0.7214 0.11786 34.12)",
+          "oklch(0.8357 0.11786 34.12)",
+          "oklch(0.9500 0.11786 34.12)"
+        ]
+      },
+      "soft-coral-ink": {
+        "role": "primary",
+        "displayName": "soft coral ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.06203 29.41)",
+          "oklch(0.2643 0.06203 29.41)",
+          "oklch(0.3786 0.06203 29.41)",
+          "oklch(0.4929 0.06203 29.41)",
+          "oklch(0.6071 0.06203 29.41)",
+          "oklch(0.7214 0.06203 29.41)",
+          "oklch(0.8357 0.06203 29.41)",
+          "oklch(0.9500 0.06203 29.41)"
+        ]
+      },
+      "mist-surface": {
+        "role": "neutral",
+        "displayName": "mist surface",
+        "tonalRamp": [
+          "oklch(0.1500 0.01276 244.26)",
+          "oklch(0.2643 0.01276 244.26)",
+          "oklch(0.3786 0.01276 244.26)",
+          "oklch(0.4929 0.01276 244.26)",
+          "oklch(0.6071 0.01276 244.26)",
+          "oklch(0.7214 0.01276 244.26)",
+          "oklch(0.8357 0.01276 244.26)",
+          "oklch(0.9500 0.01276 244.26)"
+        ]
+      },
+      "mist-ink": {
+        "role": "neutral",
+        "displayName": "mist ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.04124 245.19)",
+          "oklch(0.2643 0.04124 245.19)",
+          "oklch(0.3786 0.04124 245.19)",
+          "oklch(0.4929 0.04124 245.19)",
+          "oklch(0.6071 0.04124 245.19)",
+          "oklch(0.7214 0.04124 245.19)",
+          "oklch(0.8357 0.04124 245.19)",
+          "oklch(0.9500 0.04124 245.19)"
+        ]
+      },
+      "mist-muted": {
+        "role": "neutral",
+        "displayName": "mist muted",
+        "tonalRamp": [
+          "oklch(0.1500 0.03821 248.60)",
+          "oklch(0.2643 0.03821 248.60)",
+          "oklch(0.3786 0.03821 248.60)",
+          "oklch(0.4929 0.03821 248.60)",
+          "oklch(0.6071 0.03821 248.60)",
+          "oklch(0.7214 0.03821 248.60)",
+          "oklch(0.8357 0.03821 248.60)",
+          "oklch(0.9500 0.03821 248.60)"
+        ]
+      },
+      "mist-line": {
+        "role": "neutral",
+        "displayName": "mist line",
+        "tonalRamp": [
+          "oklch(0.1500 0.02257 243.84)",
+          "oklch(0.2643 0.02257 243.84)",
+          "oklch(0.3786 0.02257 243.84)",
+          "oklch(0.4929 0.02257 243.84)",
+          "oklch(0.6071 0.02257 243.84)",
+          "oklch(0.7214 0.02257 243.84)",
+          "oklch(0.8357 0.02257 243.84)",
+          "oklch(0.9500 0.02257 243.84)"
+        ]
+      },
+      "mist-input-line": {
+        "role": "neutral",
+        "displayName": "mist input line",
+        "tonalRamp": [
+          "oklch(0.1500 0.03767 245.76)",
+          "oklch(0.2643 0.03767 245.76)",
+          "oklch(0.3786 0.03767 245.76)",
+          "oklch(0.4929 0.03767 245.76)",
+          "oklch(0.6071 0.03767 245.76)",
+          "oklch(0.7214 0.03767 245.76)",
+          "oklch(0.8357 0.03767 245.76)",
+          "oklch(0.9500 0.03767 245.76)"
+        ]
+      },
+      "mist-surplus": {
+        "role": "semantic",
+        "displayName": "mist surplus",
+        "tonalRamp": [
+          "oklch(0.1500 0.07301 174.61)",
+          "oklch(0.2643 0.07301 174.61)",
+          "oklch(0.3786 0.07301 174.61)",
+          "oklch(0.4929 0.07301 174.61)",
+          "oklch(0.6071 0.07301 174.61)",
+          "oklch(0.7214 0.07301 174.61)",
+          "oklch(0.8357 0.07301 174.61)",
+          "oklch(0.9500 0.07301 174.61)"
+        ]
+      },
+      "mist-surplus-bg": {
+        "role": "semantic",
+        "displayName": "mist surplus bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.01827 175.29)",
+          "oklch(0.2643 0.01827 175.29)",
+          "oklch(0.3786 0.01827 175.29)",
+          "oklch(0.4929 0.01827 175.29)",
+          "oklch(0.6071 0.01827 175.29)",
+          "oklch(0.7214 0.01827 175.29)",
+          "oklch(0.8357 0.01827 175.29)",
+          "oklch(0.9500 0.01827 175.29)"
+        ]
+      },
+      "mist-deficit": {
+        "role": "semantic",
+        "displayName": "mist deficit",
+        "tonalRamp": [
+          "oklch(0.1500 0.13389 18.13)",
+          "oklch(0.2643 0.13389 18.13)",
+          "oklch(0.3786 0.13389 18.13)",
+          "oklch(0.4929 0.13389 18.13)",
+          "oklch(0.6071 0.13389 18.13)",
+          "oklch(0.7214 0.13389 18.13)",
+          "oklch(0.8357 0.13389 18.13)",
+          "oklch(0.9500 0.13389 18.13)"
+        ]
+      },
+      "mist-deficit-bg": {
+        "role": "semantic",
+        "displayName": "mist deficit bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.01934 1.41)",
+          "oklch(0.2643 0.01934 1.41)",
+          "oklch(0.3786 0.01934 1.41)",
+          "oklch(0.4929 0.01934 1.41)",
+          "oklch(0.6071 0.01934 1.41)",
+          "oklch(0.7214 0.01934 1.41)",
+          "oklch(0.8357 0.01934 1.41)",
+          "oklch(0.9500 0.01934 1.41)"
+        ]
+      },
+      "mist-swatch": {
+        "role": "neutral",
+        "displayName": "mist swatch",
+        "tonalRamp": [
+          "oklch(0.1500 0.03377 241.15)",
+          "oklch(0.2643 0.03377 241.15)",
+          "oklch(0.3786 0.03377 241.15)",
+          "oklch(0.4929 0.03377 241.15)",
+          "oklch(0.6071 0.03377 241.15)",
+          "oklch(0.7214 0.03377 241.15)",
+          "oklch(0.8357 0.03377 241.15)",
+          "oklch(0.9500 0.03377 241.15)"
+        ]
+      },
+      "sand-surface": {
+        "role": "neutral",
+        "displayName": "sand surface",
+        "tonalRamp": [
+          "oklch(0.1500 0.01199 79.78)",
+          "oklch(0.2643 0.01199 79.78)",
+          "oklch(0.3786 0.01199 79.78)",
+          "oklch(0.4929 0.01199 79.78)",
+          "oklch(0.6071 0.01199 79.78)",
+          "oklch(0.7214 0.01199 79.78)",
+          "oklch(0.8357 0.01199 79.78)",
+          "oklch(0.9500 0.01199 79.78)"
+        ]
+      },
+      "sand-ink": {
+        "role": "neutral",
+        "displayName": "sand ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.02255 64.33)",
+          "oklch(0.2643 0.02255 64.33)",
+          "oklch(0.3786 0.02255 64.33)",
+          "oklch(0.4929 0.02255 64.33)",
+          "oklch(0.6071 0.02255 64.33)",
+          "oklch(0.7214 0.02255 64.33)",
+          "oklch(0.8357 0.02255 64.33)",
+          "oklch(0.9500 0.02255 64.33)"
+        ]
+      },
+      "sand-muted": {
+        "role": "neutral",
+        "displayName": "sand muted",
+        "tonalRamp": [
+          "oklch(0.1500 0.02537 69.43)",
+          "oklch(0.2643 0.02537 69.43)",
+          "oklch(0.3786 0.02537 69.43)",
+          "oklch(0.4929 0.02537 69.43)",
+          "oklch(0.6071 0.02537 69.43)",
+          "oklch(0.7214 0.02537 69.43)",
+          "oklch(0.8357 0.02537 69.43)",
+          "oklch(0.9500 0.02537 69.43)"
+        ]
+      },
+      "sand-line": {
+        "role": "neutral",
+        "displayName": "sand line",
+        "tonalRamp": [
+          "oklch(0.1500 0.02208 76.51)",
+          "oklch(0.2643 0.02208 76.51)",
+          "oklch(0.3786 0.02208 76.51)",
+          "oklch(0.4929 0.02208 76.51)",
+          "oklch(0.6071 0.02208 76.51)",
+          "oklch(0.7214 0.02208 76.51)",
+          "oklch(0.8357 0.02208 76.51)",
+          "oklch(0.9500 0.02208 76.51)"
+        ]
+      },
+      "sand-input-line": {
+        "role": "neutral",
+        "displayName": "sand input line",
+        "tonalRamp": [
+          "oklch(0.1500 0.03590 71.59)",
+          "oklch(0.2643 0.03590 71.59)",
+          "oklch(0.3786 0.03590 71.59)",
+          "oklch(0.4929 0.03590 71.59)",
+          "oklch(0.6071 0.03590 71.59)",
+          "oklch(0.7214 0.03590 71.59)",
+          "oklch(0.8357 0.03590 71.59)",
+          "oklch(0.9500 0.03590 71.59)"
+        ]
+      },
+      "sand-surplus": {
+        "role": "semantic",
+        "displayName": "sand surplus",
+        "tonalRamp": [
+          "oklch(0.1500 0.06986 151.82)",
+          "oklch(0.2643 0.06986 151.82)",
+          "oklch(0.3786 0.06986 151.82)",
+          "oklch(0.4929 0.06986 151.82)",
+          "oklch(0.6071 0.06986 151.82)",
+          "oklch(0.7214 0.06986 151.82)",
+          "oklch(0.8357 0.06986 151.82)",
+          "oklch(0.9500 0.06986 151.82)"
+        ]
+      },
+      "sand-surplus-bg": {
+        "role": "semantic",
+        "displayName": "sand surplus bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.02055 131.46)",
+          "oklch(0.2643 0.02055 131.46)",
+          "oklch(0.3786 0.02055 131.46)",
+          "oklch(0.4929 0.02055 131.46)",
+          "oklch(0.6071 0.02055 131.46)",
+          "oklch(0.7214 0.02055 131.46)",
+          "oklch(0.8357 0.02055 131.46)",
+          "oklch(0.9500 0.02055 131.46)"
+        ]
+      },
+      "sand-deficit": {
+        "role": "semantic",
+        "displayName": "sand deficit",
+        "tonalRamp": [
+          "oklch(0.1500 0.12479 27.50)",
+          "oklch(0.2643 0.12479 27.50)",
+          "oklch(0.3786 0.12479 27.50)",
+          "oklch(0.4929 0.12479 27.50)",
+          "oklch(0.6071 0.12479 27.50)",
+          "oklch(0.7214 0.12479 27.50)",
+          "oklch(0.8357 0.12479 27.50)",
+          "oklch(0.9500 0.12479 27.50)"
+        ]
+      },
+      "sand-deficit-bg": {
+        "role": "semantic",
+        "displayName": "sand deficit bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.02048 40.53)",
+          "oklch(0.2643 0.02048 40.53)",
+          "oklch(0.3786 0.02048 40.53)",
+          "oklch(0.4929 0.02048 40.53)",
+          "oklch(0.6071 0.02048 40.53)",
+          "oklch(0.7214 0.02048 40.53)",
+          "oklch(0.8357 0.02048 40.53)",
+          "oklch(0.9500 0.02048 40.53)"
+        ]
+      },
+      "sand-swatch": {
+        "role": "neutral",
+        "displayName": "sand swatch",
+        "tonalRamp": [
+          "oklch(0.1500 0.02852 76.17)",
+          "oklch(0.2643 0.02852 76.17)",
+          "oklch(0.3786 0.02852 76.17)",
+          "oklch(0.4929 0.02852 76.17)",
+          "oklch(0.6071 0.02852 76.17)",
+          "oklch(0.7214 0.02852 76.17)",
+          "oklch(0.8357 0.02852 76.17)",
+          "oklch(0.9500 0.02852 76.17)"
+        ]
+      },
+      "jade-surface": {
+        "role": "neutral",
+        "displayName": "jade surface",
+        "tonalRamp": [
+          "oklch(0.1500 0.01254 164.79)",
+          "oklch(0.2643 0.01254 164.79)",
+          "oklch(0.3786 0.01254 164.79)",
+          "oklch(0.4929 0.01254 164.79)",
+          "oklch(0.6071 0.01254 164.79)",
+          "oklch(0.7214 0.01254 164.79)",
+          "oklch(0.8357 0.01254 164.79)",
+          "oklch(0.9500 0.01254 164.79)"
+        ]
+      },
+      "jade-ink": {
+        "role": "neutral",
+        "displayName": "jade ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.03564 173.84)",
+          "oklch(0.2643 0.03564 173.84)",
+          "oklch(0.3786 0.03564 173.84)",
+          "oklch(0.4929 0.03564 173.84)",
+          "oklch(0.6071 0.03564 173.84)",
+          "oklch(0.7214 0.03564 173.84)",
+          "oklch(0.8357 0.03564 173.84)",
+          "oklch(0.9500 0.03564 173.84)"
+        ]
+      },
+      "jade-muted": {
+        "role": "neutral",
+        "displayName": "jade muted",
+        "tonalRamp": [
+          "oklch(0.1500 0.03536 167.15)",
+          "oklch(0.2643 0.03536 167.15)",
+          "oklch(0.3786 0.03536 167.15)",
+          "oklch(0.4929 0.03536 167.15)",
+          "oklch(0.6071 0.03536 167.15)",
+          "oklch(0.7214 0.03536 167.15)",
+          "oklch(0.8357 0.03536 167.15)",
+          "oklch(0.9500 0.03536 167.15)"
+        ]
+      },
+      "jade-line": {
+        "role": "neutral",
+        "displayName": "jade line",
+        "tonalRamp": [
+          "oklch(0.1500 0.02211 162.97)",
+          "oklch(0.2643 0.02211 162.97)",
+          "oklch(0.3786 0.02211 162.97)",
+          "oklch(0.4929 0.02211 162.97)",
+          "oklch(0.6071 0.02211 162.97)",
+          "oklch(0.7214 0.02211 162.97)",
+          "oklch(0.8357 0.02211 162.97)",
+          "oklch(0.9500 0.02211 162.97)"
+        ]
+      },
+      "jade-input-line": {
+        "role": "neutral",
+        "displayName": "jade input line",
+        "tonalRamp": [
+          "oklch(0.1500 0.03574 166.37)",
+          "oklch(0.2643 0.03574 166.37)",
+          "oklch(0.3786 0.03574 166.37)",
+          "oklch(0.4929 0.03574 166.37)",
+          "oklch(0.6071 0.03574 166.37)",
+          "oklch(0.7214 0.03574 166.37)",
+          "oklch(0.8357 0.03574 166.37)",
+          "oklch(0.9500 0.03574 166.37)"
+        ]
+      },
+      "jade-surplus": {
+        "role": "semantic",
+        "displayName": "jade surplus",
+        "tonalRamp": [
+          "oklch(0.1500 0.07618 170.19)",
+          "oklch(0.2643 0.07618 170.19)",
+          "oklch(0.3786 0.07618 170.19)",
+          "oklch(0.4929 0.07618 170.19)",
+          "oklch(0.6071 0.07618 170.19)",
+          "oklch(0.7214 0.07618 170.19)",
+          "oklch(0.8357 0.07618 170.19)",
+          "oklch(0.9500 0.07618 170.19)"
+        ]
+      },
+      "jade-surplus-bg": {
+        "role": "semantic",
+        "displayName": "jade surplus bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.02427 163.10)",
+          "oklch(0.2643 0.02427 163.10)",
+          "oklch(0.3786 0.02427 163.10)",
+          "oklch(0.4929 0.02427 163.10)",
+          "oklch(0.6071 0.02427 163.10)",
+          "oklch(0.7214 0.02427 163.10)",
+          "oklch(0.8357 0.02427 163.10)",
+          "oklch(0.9500 0.02427 163.10)"
+        ]
+      },
+      "jade-deficit": {
+        "role": "semantic",
+        "displayName": "jade deficit",
+        "tonalRamp": [
+          "oklch(0.1500 0.12045 17.86)",
+          "oklch(0.2643 0.12045 17.86)",
+          "oklch(0.3786 0.12045 17.86)",
+          "oklch(0.4929 0.12045 17.86)",
+          "oklch(0.6071 0.12045 17.86)",
+          "oklch(0.7214 0.12045 17.86)",
+          "oklch(0.8357 0.12045 17.86)",
+          "oklch(0.9500 0.12045 17.86)"
+        ]
+      },
+      "jade-deficit-bg": {
+        "role": "semantic",
+        "displayName": "jade deficit bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.01885 9.33)",
+          "oklch(0.2643 0.01885 9.33)",
+          "oklch(0.3786 0.01885 9.33)",
+          "oklch(0.4929 0.01885 9.33)",
+          "oklch(0.6071 0.01885 9.33)",
+          "oklch(0.7214 0.01885 9.33)",
+          "oklch(0.8357 0.01885 9.33)",
+          "oklch(0.9500 0.01885 9.33)"
+        ]
+      },
+      "jade-swatch": {
+        "role": "neutral",
+        "displayName": "jade swatch",
+        "tonalRamp": [
+          "oklch(0.1500 0.03316 158.18)",
+          "oklch(0.2643 0.03316 158.18)",
+          "oklch(0.3786 0.03316 158.18)",
+          "oklch(0.4929 0.03316 158.18)",
+          "oklch(0.6071 0.03316 158.18)",
+          "oklch(0.7214 0.03316 158.18)",
+          "oklch(0.8357 0.03316 158.18)",
+          "oklch(0.9500 0.03316 158.18)"
+        ]
+      },
+      "rose-surface": {
+        "role": "neutral",
+        "displayName": "rose surface",
+        "tonalRamp": [
+          "oklch(0.1500 0.01257 358.78)",
+          "oklch(0.2643 0.01257 358.78)",
+          "oklch(0.3786 0.01257 358.78)",
+          "oklch(0.4929 0.01257 358.78)",
+          "oklch(0.6071 0.01257 358.78)",
+          "oklch(0.7214 0.01257 358.78)",
+          "oklch(0.8357 0.01257 358.78)",
+          "oklch(0.9500 0.01257 358.78)"
+        ]
+      },
+      "rose-ink": {
+        "role": "neutral",
+        "displayName": "rose ink",
+        "tonalRamp": [
+          "oklch(0.1500 0.03208 347.22)",
+          "oklch(0.2643 0.03208 347.22)",
+          "oklch(0.3786 0.03208 347.22)",
+          "oklch(0.4929 0.03208 347.22)",
+          "oklch(0.6071 0.03208 347.22)",
+          "oklch(0.7214 0.03208 347.22)",
+          "oklch(0.8357 0.03208 347.22)",
+          "oklch(0.9500 0.03208 347.22)"
+        ]
+      },
+      "rose-muted": {
+        "role": "neutral",
+        "displayName": "rose muted",
+        "tonalRamp": [
+          "oklch(0.1500 0.03484 345.72)",
+          "oklch(0.2643 0.03484 345.72)",
+          "oklch(0.3786 0.03484 345.72)",
+          "oklch(0.4929 0.03484 345.72)",
+          "oklch(0.6071 0.03484 345.72)",
+          "oklch(0.7214 0.03484 345.72)",
+          "oklch(0.8357 0.03484 345.72)",
+          "oklch(0.9500 0.03484 345.72)"
+        ]
+      },
+      "rose-line": {
+        "role": "neutral",
+        "displayName": "rose line",
+        "tonalRamp": [
+          "oklch(0.1500 0.02475 351.43)",
+          "oklch(0.2643 0.02475 351.43)",
+          "oklch(0.3786 0.02475 351.43)",
+          "oklch(0.4929 0.02475 351.43)",
+          "oklch(0.6071 0.02475 351.43)",
+          "oklch(0.7214 0.02475 351.43)",
+          "oklch(0.8357 0.02475 351.43)",
+          "oklch(0.9500 0.02475 351.43)"
+        ]
+      },
+      "rose-input-line": {
+        "role": "neutral",
+        "displayName": "rose input line",
+        "tonalRamp": [
+          "oklch(0.1500 0.03979 346.76)",
+          "oklch(0.2643 0.03979 346.76)",
+          "oklch(0.3786 0.03979 346.76)",
+          "oklch(0.4929 0.03979 346.76)",
+          "oklch(0.6071 0.03979 346.76)",
+          "oklch(0.7214 0.03979 346.76)",
+          "oklch(0.8357 0.03979 346.76)",
+          "oklch(0.9500 0.03979 346.76)"
+        ]
+      },
+      "rose-surplus": {
+        "role": "semantic",
+        "displayName": "rose surplus",
+        "tonalRamp": [
+          "oklch(0.1500 0.07103 163.09)",
+          "oklch(0.2643 0.07103 163.09)",
+          "oklch(0.3786 0.07103 163.09)",
+          "oklch(0.4929 0.07103 163.09)",
+          "oklch(0.6071 0.07103 163.09)",
+          "oklch(0.7214 0.07103 163.09)",
+          "oklch(0.8357 0.07103 163.09)",
+          "oklch(0.9500 0.07103 163.09)"
+        ]
+      },
+      "rose-surplus-bg": {
+        "role": "semantic",
+        "displayName": "rose surplus bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.01925 152.80)",
+          "oklch(0.2643 0.01925 152.80)",
+          "oklch(0.3786 0.01925 152.80)",
+          "oklch(0.4929 0.01925 152.80)",
+          "oklch(0.6071 0.01925 152.80)",
+          "oklch(0.7214 0.01925 152.80)",
+          "oklch(0.8357 0.01925 152.80)",
+          "oklch(0.9500 0.01925 152.80)"
+        ]
+      },
+      "rose-deficit": {
+        "role": "semantic",
+        "displayName": "rose deficit",
+        "tonalRamp": [
+          "oklch(0.1500 0.13673 12.55)",
+          "oklch(0.2643 0.13673 12.55)",
+          "oklch(0.3786 0.13673 12.55)",
+          "oklch(0.4929 0.13673 12.55)",
+          "oklch(0.6071 0.13673 12.55)",
+          "oklch(0.7214 0.13673 12.55)",
+          "oklch(0.8357 0.13673 12.55)",
+          "oklch(0.9500 0.13673 12.55)"
+        ]
+      },
+      "rose-deficit-bg": {
+        "role": "semantic",
+        "displayName": "rose deficit bg",
+        "tonalRamp": [
+          "oklch(0.1500 0.02442 358.32)",
+          "oklch(0.2643 0.02442 358.32)",
+          "oklch(0.3786 0.02442 358.32)",
+          "oklch(0.4929 0.02442 358.32)",
+          "oklch(0.6071 0.02442 358.32)",
+          "oklch(0.7214 0.02442 358.32)",
+          "oklch(0.8357 0.02442 358.32)",
+          "oklch(0.9500 0.02442 358.32)"
+        ]
+      },
+      "rose-swatch": {
+        "role": "neutral",
+        "displayName": "rose swatch",
+        "tonalRamp": [
+          "oklch(0.1500 0.03606 353.04)",
+          "oklch(0.2643 0.03606 353.04)",
+          "oklch(0.3786 0.03606 353.04)",
+          "oklch(0.4929 0.03606 353.04)",
+          "oklch(0.6071 0.03606 353.04)",
+          "oklch(0.7214 0.03606 353.04)",
+          "oklch(0.8357 0.03606 353.04)",
+          "oklch(0.9500 0.03606 353.04)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Manrope display",
+        "purpose": "Headings and numeric emphasis, with tabular figures for amounts."
+      },
+      "body": {
+        "displayName": "Be Vietnam Pro body",
+        "purpose": "Body copy and form labels, shared by both styles."
+      },
+      "page-title": {
+        "displayName": "Page title",
+        "purpose": "Responsive route heading."
+      },
+      "section-title": {
+        "displayName": "Section title",
+        "purpose": "Panel headings."
+      }
+    },
     "shadows": [
-      { "name": "dialog", "value": "0 24px 64px -16px rgb(32 58 86 / 22%)", "purpose": "Modal separation in the modern style." },
-      { "name": "skeuomorphic-panel", "value": "inset 0 1px 0 rgb(255 255 255 / 80%), 0 8px 18px -9px var(--material-shadow), 0 3px 6px -4px var(--material-shadow)", "purpose": "Physical depth for Sổ tay panels." }
+      {
+        "name": "dialog",
+        "value": "0 24px 64px -16px rgb(32 58 86 / 22%)",
+        "purpose": "Modern dialog separation; the production token has a fixed Tide tint."
+      },
+      {
+        "name": "soft-raised",
+        "value": "8px 8px 20px var(--material-shadow), -8px -8px 20px var(--material-light)",
+        "purpose": "Nổi mềm same-color relief."
+      },
+      {
+        "name": "soft-control",
+        "value": "4px 4px 10px var(--material-shadow), -4px -4px 10px var(--material-light)",
+        "purpose": "Nổi mềm same-color relief."
+      },
+      {
+        "name": "soft-inset",
+        "value": "inset 4px 4px 8px var(--material-shadow), inset -4px -4px 8px var(--material-light)",
+        "purpose": "Nổi mềm same-color relief."
+      },
+      {
+        "name": "soft-pressed",
+        "value": "inset 2px 2px 5px var(--material-shadow), inset -2px -2px 5px var(--material-light)",
+        "purpose": "Nổi mềm same-color relief."
+      },
+      {
+        "name": "soft-dialog",
+        "value": "16px 16px 40px var(--material-shadow), -8px -8px 24px var(--material-light)",
+        "purpose": "Nổi mềm same-color relief."
+      },
+      {
+        "name": "soft-primary",
+        "value": "4px 4px 12px var(--material-shadow), -4px -4px 10px var(--material-light), inset 0 1px 0 rgb(255 255 255 / 35%)",
+        "purpose": "Nổi mềm same-color relief."
+      },
+      {
+        "name": "mist",
+        "value": "8px 8px 20px rgb(112 140 165 / 30%), -8px -8px 20px rgb(255 255 255 / 85%)",
+        "purpose": "Complete raised-panel shadow using this theme's production tint."
+      },
+      {
+        "name": "sand",
+        "value": "8px 8px 20px rgb(155 137 112 / 28%), -8px -8px 20px rgb(255 255 255 / 85%)",
+        "purpose": "Complete raised-panel shadow using this theme's production tint."
+      },
+      {
+        "name": "jade",
+        "value": "8px 8px 20px rgb(111 147 131 / 29%), -8px -8px 20px rgb(255 255 255 / 85%)",
+        "purpose": "Complete raised-panel shadow using this theme's production tint."
+      },
+      {
+        "name": "rose",
+        "value": "8px 8px 20px rgb(164 125 141 / 27%), -8px -8px 20px rgb(255 255 255 / 85%)",
+        "purpose": "Complete raised-panel shadow using this theme's production tint."
+      },
+      {
+        "name": "highlight",
+        "value": "4px 4px 12px var(--material-shadow), -4px -4px 10px rgb(255 255 255 / 85%), inset 0 1px 0 rgb(255 255 255 / 35%)",
+        "purpose": "Complete primary-action shadow with production paired highlight and inner edge."
+      }
     ],
     "motion": [
-      { "name": "control-state", "value": "150ms ease", "purpose": "Input and button color changes." },
-      { "name": "pressed", "value": "translateY(1px)", "purpose": "Sổ tay button activation." }
+      {
+        "name": "button-state",
+        "value": "background-color 150ms ease, opacity 150ms ease",
+        "purpose": "Production button transitions."
+      },
+      {
+        "name": "input-state",
+        "value": "border-color 150ms ease, background-color 150ms ease",
+        "purpose": "Production field transitions."
+      },
+      {
+        "name": "soft-button-state",
+        "value": "box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1), background-color 180ms ease, opacity 150ms ease",
+        "purpose": "Nổi mềm controls; transition:none under prefers-reduced-motion."
+      },
+      {
+        "name": "soft-pressed",
+        "value": "translateY(1px)",
+        "purpose": "Immediate enabled active button movement."
+      }
     ],
     "breakpoints": [
-      { "name": "desktop", "value": "48rem" }
+      {
+        "name": "sm",
+        "value": "40rem"
+      },
+      {
+        "name": "md",
+        "value": "48rem"
+      }
     ]
   },
   "components": [
     {
-      "name": "Primary Button",
+      "name": "Modern Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Main action; uses the active ink and a visible focus outline.",
-      "html": "<button class=\"ds-btn-primary\">Lưu giao diện</button>",
-      "css": ".ds-btn-primary{background:var(--color-ink,#203a56);color:var(--color-white,#fff);border:0;border-radius:var(--radius-control,.625rem);padding:.625rem 1rem;font-weight:600;min-height:3rem;cursor:pointer}.ds-btn-primary:hover{filter:brightness(1.12)}.ds-btn-primary:focus-visible{outline:2px solid var(--color-ink,#203a56);outline-offset:3px}"
+      "description": "Main action using the active palette's ink; hover matches the production color mix.",
+      "html": "<button class=\"ds-button ds-primary\" type=\"button\">Lưu giao diện</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;min-width:2.75rem;padding:.625rem 1rem;border:0;border-radius:var(--radius-control,.625rem);font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif);font-size:1rem;font-weight:600;line-height:1.5;cursor:pointer;transition:background-color 150ms ease,opacity 150ms ease}.ds-button:disabled{cursor:not-allowed;opacity:.5}.ds-button:focus-visible{outline:2px solid var(--color-ink,#203a56);outline-offset:3px}.ds-primary{background:var(--color-ink,#203a56);color:var(--color-white,#ffffff)}@media(hover:hover){.ds-primary:hover:not(:disabled){background:color-mix(in srgb,var(--color-ink,#203a56) 88%,#ffffff)}}"
     },
     {
-      "name": "Input",
-      "kind": "input",
-      "description": "Readable amount or date field with a strong focus boundary.",
-      "html": "<input class=\"ds-input\" value=\"100.000\" aria-label=\"Số tiền\">",
-      "css": ".ds-input{background:var(--color-white,#fff);color:var(--color-ink,#203a56);border:1px solid var(--color-input-line,#8193a3);border-radius:var(--radius-control,.625rem);padding:.75rem 1rem;min-height:3rem}.ds-input:focus-visible{outline:2px solid var(--color-ink,#203a56);outline-offset:3px}"
+      "name": "Modern Secondary Button",
+      "kind": "button",
+      "description": "Bordered supporting action used for cycle navigation and cancellation.",
+      "html": "<button class=\"ds-button ds-secondary\" type=\"button\">Hủy</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;min-width:2.75rem;padding:.625rem 1rem;border:0;border-radius:var(--radius-control,.625rem);font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif);font-size:1rem;font-weight:600;line-height:1.5;cursor:pointer;transition:background-color 150ms ease,opacity 150ms ease}.ds-button:disabled{cursor:not-allowed;opacity:.5}.ds-button:focus-visible{outline:2px solid var(--color-ink,#203a56);outline-offset:3px}.ds-secondary{border:1px solid var(--color-line,#d9e2e9);background:var(--color-white,#ffffff);color:var(--color-ink,#203a56)}@media(hover:hover){.ds-secondary:hover:not(:disabled){background:var(--color-surplus-bg,#e1f1ee)}}",
+      "refersTo": "button-secondary"
     },
     {
-      "name": "Sổ tay panel",
+      "name": "Modern Danger Button",
+      "kind": "button",
+      "description": "Destructive confirmation action using the semantic deficit color.",
+      "html": "<button class=\"ds-button ds-danger\" type=\"button\">Xóa</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;min-width:2.75rem;padding:.625rem 1rem;border:0;border-radius:var(--radius-control,.625rem);font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif);font-size:1rem;font-weight:600;line-height:1.5;cursor:pointer;transition:background-color 150ms ease,opacity 150ms ease}.ds-button:disabled{cursor:not-allowed;opacity:.5}.ds-button:focus-visible{outline:2px solid var(--color-ink,#203a56);outline-offset:3px}.ds-danger{background:var(--color-deficit,#a84453);color:var(--color-white,#ffffff)}@media(hover:hover){.ds-danger:hover:not(:disabled){background:color-mix(in srgb,var(--color-deficit,#a84453) 85%,#000000)}}",
+      "refersTo": "button-danger"
+    },
+    {
+      "name": "Modern Panel",
       "kind": "card",
-      "description": "Tactile panel used only in the Sổ tay style.",
-      "html": "<section class=\"ds-ledger-panel\"><strong>Còn lại hôm nay</strong><p>100.000 đ</p></section>",
-      "css": ".ds-ledger-panel{background:linear-gradient(145deg,rgba(255,255,255,.5),transparent 55%),var(--color-white,#fffaf0);color:var(--color-ink,#35413c);border:1px solid var(--material-edge,#bcae97);border-radius:var(--radius-panel,1rem);padding:1.25rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 18px -9px rgba(77,58,37,.2)}.ds-ledger-panel p{font-variant-numeric:tabular-nums;font-weight:700}"
+      "description": "Flat content surface with a palette-bound border and responsive padding.",
+      "html": "<section class=\"ds-panel\"><h2>Giao diện</h2><p>Chọn kiểu bạn thích.</p></section>",
+      "css": ".ds-panel{border:1px solid var(--color-line,#d9e2e9);border-radius:var(--radius-panel,1rem);background:var(--color-white,#ffffff);color:var(--color-ink,#203a56);padding:1.25rem;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif);line-height:1.5}.ds-panel h2{font-family:var(--font-display,'Manrope',ui-sans-serif,system-ui,sans-serif);font-size:1.0625rem;font-weight:600;line-height:1.4;letter-spacing:-.015em;margin:0}.ds-panel p{margin:.25rem 0 0;color:var(--color-muted,#53677a);font-size:.875rem}@media(min-width:48rem){.ds-panel{padding:1.5rem}}",
+      "refersTo": "panel"
+    },
+    {
+      "name": "Nổi mềm Primary Button",
+      "kind": "button",
+      "refersTo": "soft-button-primary",
+      "description": "Coral action with recessed active state.",
+      "html": "<div class=\"ds-soft\"><button class=\"ds-button ds-primary\" type=\"button\">Lưu giao diện</button></div>",
+      "css": ".ds-soft{--color-canvas:#e6eef5;--color-white:#e6eef5;--color-ink:#293e50;--color-muted:#526578;--color-line:#c5d3df;--color-input-line:#74899c;--color-surplus-bg:#d9e9e4;--radius-control:1rem;--radius-panel:1.5rem;--material-accent:#ee917b;--material-accent-ink:#542b25;--material-shadow:rgb(112 140 165 / 30%);--material-light:rgb(255 255 255 / 85%);--material-raised:8px 8px 20px var(--material-shadow), -8px -8px 20px var(--material-light);--material-control:4px 4px 10px var(--material-shadow), -4px -4px 10px var(--material-light);--material-inset:inset 4px 4px 8px var(--material-shadow), inset -4px -4px 8px var(--material-light);--material-pressed:inset 2px 2px 5px var(--material-shadow), inset -2px -2px 5px var(--material-light);background:var(--color-canvas);color:var(--color-ink);padding:1.5rem;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif)}.ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;min-width:2.75rem;padding:.625rem 1rem;border:0;border-radius:var(--radius-control,.625rem);font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif);font-size:1rem;font-weight:600;line-height:1.5;cursor:pointer;transition:background-color 150ms ease,opacity 150ms ease}.ds-button:disabled{cursor:not-allowed;opacity:.5}.ds-button:focus-visible{outline:2px solid var(--color-ink,#203a56);outline-offset:3px}.ds-primary{background:var(--material-accent);color:var(--material-accent-ink);border:1px solid transparent;box-shadow:4px 4px 12px var(--material-shadow), -4px -4px 10px var(--material-light), inset 0 1px 0 rgb(255 255 255 / 35%);transition:box-shadow 180ms cubic-bezier(.16,1,.3,1),background-color 180ms ease,opacity 150ms ease}.ds-primary:active:not(:disabled){transform:translateY(1px);box-shadow:var(--material-pressed)}@media(hover:hover){.ds-primary:hover:not(:disabled){background:color-mix(in srgb,var(--material-accent) 90%,#ffffff)}}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}@media(forced-colors:active){.ds-soft button,.ds-soft a,.ds-soft label,.ds-soft section{border:1px solid ButtonText;box-shadow:none}.ds-soft [aria-selected=true],.ds-soft [aria-current=page],.ds-soft label:has(input:checked){outline:2px solid Highlight;outline-offset:-3px}}"
+    },
+    {
+      "name": "Nổi mềm Money Input",
+      "kind": "input",
+      "refersTo": "soft-input",
+      "description": "Native amount input with visible boundary and inset relief.",
+      "html": "<div class=\"ds-soft\"><label class=\"ds-input-label\">Số tiền (đ)<input class=\"ds-input\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" value=\"100.000\" placeholder=\"0\"></label></div>",
+      "css": ".ds-soft{--color-canvas:#e6eef5;--color-white:#e6eef5;--color-ink:#293e50;--color-muted:#526578;--color-line:#c5d3df;--color-input-line:#74899c;--color-surplus-bg:#d9e9e4;--radius-control:1rem;--radius-panel:1.5rem;--material-accent:#ee917b;--material-accent-ink:#542b25;--material-shadow:rgb(112 140 165 / 30%);--material-light:rgb(255 255 255 / 85%);--material-raised:8px 8px 20px var(--material-shadow), -8px -8px 20px var(--material-light);--material-control:4px 4px 10px var(--material-shadow), -4px -4px 10px var(--material-light);--material-inset:inset 4px 4px 8px var(--material-shadow), inset -4px -4px 8px var(--material-light);--material-pressed:inset 2px 2px 5px var(--material-shadow), inset -2px -2px 5px var(--material-light);background:var(--color-canvas);color:var(--color-ink);padding:1.5rem;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif)}.ds-input-label{display:block;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif);font-size:.875rem;font-weight:500;color:var(--color-muted,#53677a)}.ds-input{display:block;width:100%;box-sizing:border-box;margin-top:.25rem;border:1px solid var(--color-input-line,#8193a3);background:var(--color-white,#ffffff);color:var(--color-ink,#203a56);border-radius:var(--radius-control,.625rem);min-height:3rem;padding:.75rem 1rem;font-family:var(--font-display,'Manrope',ui-sans-serif,system-ui,sans-serif);font-size:1.125rem;font-weight:600;line-height:1.5;font-variant-numeric:tabular-nums;caret-color:var(--color-ink,#203a56);transition:border-color 150ms ease,background-color 150ms ease}.ds-input::placeholder{color:var(--color-muted,#53677a);opacity:1}.ds-input:focus-visible{border-color:var(--color-ink,#203a56);outline:2px solid var(--color-ink,#203a56);outline-offset:3px}.ds-input{box-shadow:var(--material-inset)}@media(forced-colors:active){.ds-soft button,.ds-soft a,.ds-soft label,.ds-soft section{border:1px solid ButtonText;box-shadow:none}.ds-soft [aria-selected=true],.ds-soft [aria-current=page],.ds-soft label:has(input:checked){outline:2px solid Highlight;outline-offset:-3px}}"
+    },
+    {
+      "name": "Nổi mềm Panel",
+      "kind": "card",
+      "refersTo": "soft-panel",
+      "description": "Shared pastel surface with raised paired shadows.",
+      "html": "<div class=\"ds-soft\"><section class=\"ds-panel\"><h2>Giao diện</h2><p>Chọn kiểu bạn thích.</p></section></div>",
+      "css": ".ds-soft{--color-canvas:#e6eef5;--color-white:#e6eef5;--color-ink:#293e50;--color-muted:#526578;--color-line:#c5d3df;--color-input-line:#74899c;--color-surplus-bg:#d9e9e4;--radius-control:1rem;--radius-panel:1.5rem;--material-accent:#ee917b;--material-accent-ink:#542b25;--material-shadow:rgb(112 140 165 / 30%);--material-light:rgb(255 255 255 / 85%);--material-raised:8px 8px 20px var(--material-shadow), -8px -8px 20px var(--material-light);--material-control:4px 4px 10px var(--material-shadow), -4px -4px 10px var(--material-light);--material-inset:inset 4px 4px 8px var(--material-shadow), inset -4px -4px 8px var(--material-light);--material-pressed:inset 2px 2px 5px var(--material-shadow), inset -2px -2px 5px var(--material-light);background:var(--color-canvas);color:var(--color-ink);padding:1.5rem;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif)}.ds-panel{border:1px solid var(--color-line,#d9e2e9);border-radius:var(--radius-panel,1rem);background:var(--color-white,#ffffff);color:var(--color-ink,#203a56);padding:1.25rem;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif);line-height:1.5}.ds-panel h2{font-family:var(--font-display,'Manrope',ui-sans-serif,system-ui,sans-serif);font-size:1.0625rem;font-weight:600;line-height:1.4;letter-spacing:-.015em;margin:0}.ds-panel p{margin:.25rem 0 0;color:var(--color-muted,#53677a);font-size:.875rem}@media(min-width:48rem){.ds-panel{padding:1.5rem}}.ds-panel{border-color:transparent;box-shadow:var(--material-raised)}@media(forced-colors:active){.ds-soft button,.ds-soft a,.ds-soft label,.ds-soft section{border:1px solid ButtonText;box-shadow:none}.ds-soft [aria-selected=true],.ds-soft [aria-current=page],.ds-soft label:has(input:checked){outline:2px solid Highlight;outline-offset:-3px}}"
+    },
+    {
+      "name": "Nổi mềm Navigation",
+      "kind": "nav",
+      "refersTo": "soft-navigation",
+      "description": "Current page is recessed; other links remain raised.",
+      "html": "<div class=\"ds-soft\"><nav class=\"ds-nav\" aria-label=\"Điều hướng chính\"><a class=\"ds-nav-link\" href=\"/\" aria-current=\"page\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/></svg>Hôm nay</a><a class=\"ds-nav-link\" href=\"/history\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 12a9 9 0 1 0 3-6.7M3 5v4h4M12 8v4l2.5 2.5\"/></svg>Lịch sử</a></nav></div>",
+      "css": ".ds-soft{--color-canvas:#e6eef5;--color-white:#e6eef5;--color-ink:#293e50;--color-muted:#526578;--color-line:#c5d3df;--color-input-line:#74899c;--color-surplus-bg:#d9e9e4;--radius-control:1rem;--radius-panel:1.5rem;--material-accent:#ee917b;--material-accent-ink:#542b25;--material-shadow:rgb(112 140 165 / 30%);--material-light:rgb(255 255 255 / 85%);--material-raised:8px 8px 20px var(--material-shadow), -8px -8px 20px var(--material-light);--material-control:4px 4px 10px var(--material-shadow), -4px -4px 10px var(--material-light);--material-inset:inset 4px 4px 8px var(--material-shadow), inset -4px -4px 8px var(--material-light);--material-pressed:inset 2px 2px 5px var(--material-shadow), inset -2px -2px 5px var(--material-light);background:var(--color-canvas);color:var(--color-ink);padding:1.5rem;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif)}.ds-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.25rem;background:var(--color-white,#ffffff);font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif)}.ds-nav-link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;padding:.5rem;border-radius:var(--radius-control,.625rem);color:var(--color-muted,#53677a);font-size:.75rem;line-height:1.5;text-decoration:none;transition:color 150ms cubic-bezier(.4,0,.2,1),background-color 150ms cubic-bezier(.4,0,.2,1)}.ds-nav-link[aria-current=page]{background:var(--color-surplus-bg,#e1f1ee);font-weight:600;color:var(--color-ink,#203a56)}.ds-nav-link:hover:not([aria-current=page]){background:var(--color-surplus-bg,#e1f1ee);color:var(--color-ink,#203a56)}.ds-nav-link:focus-visible{outline:2px solid var(--color-ink,#203a56);outline-offset:3px}@media(min-width:48rem){.ds-nav-link{flex-direction:row;gap:.5rem;padding:.75rem;font-size:.875rem}}.ds-nav{gap:.75rem;background:var(--color-canvas)}.ds-nav-link{background:var(--color-white);box-shadow:var(--material-control)}.ds-nav-link[aria-current=page]{background:var(--color-white);box-shadow:var(--material-inset)}.ds-nav-link[aria-current=page] svg{color:var(--material-accent-ink)}.ds-nav-link:hover:not([aria-current=page]){background:var(--color-white)}@media(forced-colors:active){.ds-soft button,.ds-soft a,.ds-soft label,.ds-soft section{border:1px solid ButtonText;box-shadow:none}.ds-soft [aria-selected=true],.ds-soft [aria-current=page],.ds-soft label:has(input:checked){outline:2px solid Highlight;outline-offset:-3px}}"
+    },
+    {
+      "name": "Nổi mềm Style Choice",
+      "kind": "custom",
+      "refersTo": "soft-choice",
+      "description": "Native radio selection stays inset; style choice is separate from cycle palette.",
+      "html": "<div class=\"ds-soft\"><fieldset class=\"ds-choices\"><legend>Kiểu giao diện</legend><label class=\"ds-choice\"><input type=\"radio\" name=\"ds-visualStyle\" value=\"modern\" checked><span class=\"ds-choice-content\"><strong>Hiện tại</strong><span>Thoáng, phẳng, dễ tập trung vào số liệu.</span></span></label><label class=\"ds-choice\"><input type=\"radio\" name=\"ds-visualStyle\" value=\"skeuomorphic\"><span class=\"ds-choice-content\"><strong>Nổi mềm</strong><span>Bề mặt pastel, bóng nổi mềm và nút bấm lõm nhẹ.</span></span></label></fieldset></div>",
+      "css": ".ds-soft{--color-canvas:#e6eef5;--color-white:#e6eef5;--color-ink:#293e50;--color-muted:#526578;--color-line:#c5d3df;--color-input-line:#74899c;--color-surplus-bg:#d9e9e4;--radius-control:1rem;--radius-panel:1.5rem;--material-accent:#ee917b;--material-accent-ink:#542b25;--material-shadow:rgb(112 140 165 / 30%);--material-light:rgb(255 255 255 / 85%);--material-raised:8px 8px 20px var(--material-shadow), -8px -8px 20px var(--material-light);--material-control:4px 4px 10px var(--material-shadow), -4px -4px 10px var(--material-light);--material-inset:inset 4px 4px 8px var(--material-shadow), inset -4px -4px 8px var(--material-light);--material-pressed:inset 2px 2px 5px var(--material-shadow), inset -2px -2px 5px var(--material-light);background:var(--color-canvas);color:var(--color-ink);padding:1.5rem;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif)}.ds-choices{display:grid;gap:.75rem;border:0;padding:0;margin:0;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif);color:var(--color-ink,#203a56)}.ds-choices legend{padding:0;margin-bottom:.75rem}.ds-choice{display:flex;gap:.75rem;align-items:flex-start;padding:1rem;border:1px solid var(--color-line,#d9e2e9);border-radius:var(--radius-control,.625rem);background:var(--color-white,#ffffff);cursor:pointer}.ds-choice:has(input:checked){border-color:var(--color-ink,#203a56);box-shadow:0 0 0 1px var(--color-ink,#203a56)}.ds-choice:focus-within{outline:2px solid var(--color-ink,#203a56);outline-offset:3px}.ds-choice input{margin-top:.25rem;accent-color:var(--color-ink,#203a56)}.ds-choice-content{display:grid;gap:.375rem;line-height:1.5}.ds-choice-content strong{font-family:var(--font-display,'Manrope',ui-sans-serif,system-ui,sans-serif);font-weight:700}.ds-choice-content span{color:var(--color-muted,#53677a);font-size:.875rem}@media(min-width:40rem){.ds-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}.ds-choice{border-color:transparent;box-shadow:var(--material-control)}.ds-choice:has(input:checked){border-color:var(--color-input-line);box-shadow:var(--material-inset)}@media(forced-colors:active){.ds-soft button,.ds-soft a,.ds-soft label,.ds-soft section{border:1px solid ButtonText;box-shadow:none}.ds-soft [aria-selected=true],.ds-soft [aria-current=page],.ds-soft label:has(input:checked){outline:2px solid Highlight;outline-offset:-3px}}"
+    },
+    {
+      "name": "Nổi mềm Segmented Tabs",
+      "kind": "custom",
+      "refersTo": "soft-segment",
+      "description": "Pressed tray and recessed selected tab.",
+      "html": "<div class=\"ds-soft\"><div class=\"ds-segment\" role=\"tablist\" aria-label=\"Loại giao dịch\"><button type=\"button\" role=\"tab\" aria-selected=\"true\">Chi</button><button type=\"button\" role=\"tab\" aria-selected=\"false\">Thu</button></div></div>",
+      "css": ".ds-soft{--color-canvas:#e6eef5;--color-white:#e6eef5;--color-ink:#293e50;--color-muted:#526578;--color-line:#c5d3df;--color-input-line:#74899c;--color-surplus-bg:#d9e9e4;--radius-control:1rem;--radius-panel:1.5rem;--material-accent:#ee917b;--material-accent-ink:#542b25;--material-shadow:rgb(112 140 165 / 30%);--material-light:rgb(255 255 255 / 85%);--material-raised:8px 8px 20px var(--material-shadow), -8px -8px 20px var(--material-light);--material-control:4px 4px 10px var(--material-shadow), -4px -4px 10px var(--material-light);--material-inset:inset 4px 4px 8px var(--material-shadow), inset -4px -4px 8px var(--material-light);--material-pressed:inset 2px 2px 5px var(--material-shadow), inset -2px -2px 5px var(--material-light);background:var(--color-canvas);color:var(--color-ink);padding:1.5rem;font-family:var(--font-sans,'Be Vietnam Pro',ui-sans-serif,system-ui,sans-serif)}.ds-segment{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;padding:.5rem;border-radius:1rem;background:var(--color-canvas);box-shadow:var(--material-pressed)}.ds-segment button{min-height:2.75rem;min-width:0;padding:.5rem;border:0;border-radius:.75rem;background:transparent;color:var(--color-muted);font:500 .875rem/1.5 var(--font-sans,'Be Vietnam Pro',sans-serif);cursor:pointer}.ds-segment button[aria-selected=true]{background:var(--color-white);color:var(--color-ink);font-weight:600;box-shadow:var(--material-pressed)}.ds-segment button:hover{color:var(--color-ink)}.ds-segment button:focus-visible{outline:2px solid var(--color-ink);outline-offset:3px}.ds-segment button:disabled{opacity:.5;cursor:not-allowed}@media(forced-colors:active){.ds-soft button,.ds-soft a,.ds-soft label,.ds-soft section{border:1px solid ButtonText;box-shadow:none}.ds-soft [aria-selected=true],.ds-soft [aria-current=page],.ds-soft label:has(input:checked){outline:2px solid Highlight;outline-offset:-3px}}"
     }
   ],
   "narrative": {
     "northStar": "A dependable daily ledger",
-    "overview": "Tideline is an operating interface for frequent money entries. Users choose between Hiện tại and the tactile Sổ tay style; four palettes in each style rotate with the spending cycle.",
-    "keyCharacteristics": ["Numbers and actions stay prominent across styles.", "Palette changes mark a new cycle without relocating controls.", "Sổ tay gives surfaces, fields, and buttons restrained physical depth."],
-    "rules": [
-      { "name": "The Semantic Color Rule", "body": "Positive balance remains green and deficit remains red in all eight themes.", "section": "colors" },
-      { "name": "The Material Rule", "body": "Depth clarifies which areas are a surface, an input, or an action; it does not compete with money values.", "section": "elevation" }
+    "overview": "Tideline is an operating interface for frequent money entries. Numbers, navigation and semantic status colors stay stable across the incumbent **Hiện tại** style and the soft relief **Nổi mềm** style. The style is chosen separately from the palette: each style owns four themes that rotate with the spending cycle, beginning with the cycle containing account creation.\n\nNổi mềm uses pastel surfaces of one shared color, with upper-left light and lower-right shade. Raised actions press inward; fields and selected controls remain recessed. Manrope and Be Vietnam Pro retain the familiar hierarchy so material depth supports daily entry and reading.",
+    "keyCharacteristics": [
+      "Numbers and actions stay prominent across styles.",
+      "Palette changes mark a new cycle without relocating controls.",
+      "Nổi mềm uses same-color relief and recessed selections."
     ],
-    "dos": ["Do preserve readable contrast and semantic surplus/deficit meaning in every palette.", "Do show the style choice and current cycle theme together in Settings.", "Do keep form controls and navigation in consistent positions across styles."],
-    "donts": ["Don't let material lighting reduce the contrast of amount text or chart data.", "Don't change the spending calculation or transaction history when the theme changes."]
+    "rules": [
+      {
+        "name": "The Semantic Color Rule",
+        "body": "Positive balance remains green and deficit remains red in all eight themes. Labels, input boundaries and status backgrounds follow the active palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The Shared Surface Rule",
+        "body": "Nổi mềm uses the same color for canvas and surfaces; paired shadows define depth, while selected tabs, navigation and radio choices stay inset.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve readable contrast and semantic surplus/deficit meaning in every palette.",
+      "Do show the style choice separately from the current cycle theme in Settings.",
+      "Do keep native field boundaries, visible focus and consistent navigation positions across styles."
+    ],
+    "donts": [
+      "Don't let material lighting reduce the contrast of amount text or chart data.",
+      "Don't change the spending calculation or transaction history when the theme changes.",
+      "Don't replace recessed selected controls with raised shadows in Nổi mềm."
+    ]
   }
 }

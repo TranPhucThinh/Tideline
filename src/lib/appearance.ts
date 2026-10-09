@@ -2,7 +2,7 @@ export type VisualStyle = 'modern' | 'skeuomorphic';
 
 export const THEME_NAMES: Record<VisualStyle, readonly string[]> = {
 	modern: ['Tide', 'Dawn', 'Slate', 'Bloom'],
-	skeuomorphic: ['Sổ thu chi', 'Đồng thau', 'Men biển', 'Đất nung']
+	skeuomorphic: ['Sương xanh', 'Cát ấm', 'Ngọc dịu', 'Hồng phấn']
 };
 
 export function isVisualStyle(value: unknown): value is VisualStyle {
