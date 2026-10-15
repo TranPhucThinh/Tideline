@@ -30,35 +30,3 @@ export function parseMoneyInput(raw: string): number | null {
 	if (!Number.isFinite(value) || value <= 0) return null;
 	return Math.round(value);
 }
-
-export type MoneyExpressionResult =
-	| { status: 'empty' | 'incomplete' }
-	| { status: 'invalid'; message: string; value?: number }
-	| { status: 'valid'; value: number };
-
-/** Evaluate integer VND additions/subtractions without changing or executing the input. */
-export function parseMoneyExpression(raw: string): MoneyExpressionResult {
-	const invalid = (message: string): MoneyExpressionResult => ({ status: 'invalid', message });
-	if (raw.length > 200) return invalid('Phép tính quá dài. Nhập tối đa 200 ký tự.');
-	if (/[\r\n]/.test(raw)) return invalid('Nhập phép tính trên một dòng.');
-	const expression = raw.replace(/−/g, '-').trim();
-	if (!expression) return { status: 'empty' };
-	const tokens = expression.split(/([+-])/);
-	let total = 0;
-	for (let i = 0; i < tokens.length; i += 2) {
-		const token = tokens[i].trim();
-		if (!token && i > 0 && i === tokens.length - 1) return { status: 'incomplete' };
-		// Dots are accepted only as correctly grouped thousands, never as decimals.
-		if (!/^(?:\d+|[1-9]\d{0,2}(?:\.\d{3})+)$/.test(token)) {
-			return invalid('Nhập số tiền nguyên và dấu + hoặc −. Dùng dấu chấm để ngăn cách hàng nghìn.');
-		}
-		const amount = Number(token.replace(/\./g, ''));
-		if (!Number.isSafeInteger(amount)) return invalid('Số tiền quá lớn. Hãy giảm số tiền.');
-		total += tokens[i - 1] === '-' ? -amount : amount;
-		if (!Number.isSafeInteger(total)) return invalid('Kết quả quá lớn. Hãy giảm số tiền.');
-	}
-	if (total <= 0) {
-		return { status: 'invalid', message: 'Số tiền cuối cùng phải lớn hơn 0.', value: total };
-	}
-	return { status: 'valid', value: total };
-}
