@@ -4,7 +4,7 @@
 	import { currentCycle, computeCycleLedger, type CycleBound } from '$lib/cycle';
 	import { createLimitLookups } from '$lib/settings';
 	import type { LimitSetting } from '$lib/types';
-	import { formatMoney, formatSignedMoney, parseMoneyInput } from '$lib/money';
+	import { formatMoney, formatSignedMoney, parseMoneyExpression } from '$lib/money';
 	import DateField from '$lib/DateField.svelte';
 	import Spinner from '$lib/Spinner.svelte';
 	import ConfirmDialog from '$lib/ConfirmDialog.svelte';
@@ -111,11 +111,12 @@
 			formError = 'Không thể nhập khoản cho ngày trong tương lai.';
 			return;
 		}
-		const amount = parseMoneyInput(amountInput);
-		if (amount === null) {
-			formError = 'Nhập số tiền hợp lệ (số dương).';
+		const parsed = parseMoneyExpression(amountInput);
+		if (parsed.status !== 'valid') {
+			formError = parsed.status === 'invalid' ? parsed.message : 'Nhập đầy đủ số tiền hoặc phép cộng/trừ.';
 			return;
 		}
+		const amount = parsed.value;
 		submitting = true;
 		try {
 			const table = entryType === 'expense' ? 'expenses' : 'incomes';
@@ -215,11 +216,12 @@
 
 	async function saveEdit(type: EntryType, current: ExpenseItem) {
 		editError = '';
-		const amount = parseMoneyInput(editAmount);
-		if (amount === null) {
-			editError = 'Nhập số tiền hợp lệ (số dương).';
+		const parsed = parseMoneyExpression(editAmount);
+		if (parsed.status !== 'valid') {
+			editError = parsed.status === 'invalid' ? parsed.message : 'Nhập đầy đủ số tiền hoặc phép cộng/trừ.';
 			return;
 		}
+		const amount = parsed.value;
 		savingId = current.id;
 		const table = type === 'expense' ? 'expenses' : 'incomes';
 		const { error } = await supabase
@@ -320,6 +322,7 @@
 		<div>
 			<MoneyInput
 				id="amount"
+				allowExpression
 				label="Số tiền (đ)"
 				value={amountInput}
 				onchange={(v) => (amountInput = v)}
@@ -403,6 +406,7 @@
 			<div>
 				<MoneyInput
 					id="edit-amount"
+					allowExpression
 					label="Số tiền (đ)"
 					value={editAmount}
 					onchange={(v) => (editAmount = v)}
