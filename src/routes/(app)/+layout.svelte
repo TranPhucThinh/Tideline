@@ -16,6 +16,7 @@
 		{ href: '/', label: 'Hôm nay', icon: 'today' },
 		{ href: '/history', label: 'Lịch sử', icon: 'history' },
 		{ href: '/stats', label: 'Thống kê', icon: 'stats' },
+		{ href: '/payables', label: 'Phải trả', icon: 'payables' },
 		{ href: '/settings', label: 'Cài đặt', icon: 'settings' }
 	];
 
@@ -90,10 +91,10 @@
 			<span class="font-display text-lg font-semibold">Tideline</span>
 			<span class="sr-only">Giao diện {visualStyle === 'modern' ? 'hiện tại' : 'nổi mềm'}, theme {activeTheme}</span>
 		</div>
-		<nav class="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-canvas pb-[env(safe-area-inset-bottom)] md:static md:ml-auto md:border-0 md:bg-transparent md:p-0" aria-label="Điều hướng chính">
-			<div class="mx-auto grid max-w-[30rem] grid-cols-4 gap-1 p-2 md:flex md:max-w-none md:p-0">
+		<nav class="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-canvas pb-[env(safe-area-inset-bottom)] lg:static lg:ml-auto lg:border-0 lg:bg-transparent lg:p-0" aria-label="Điều hướng chính">
+			<div class="mx-auto grid max-w-[30rem] grid-cols-5 gap-1 p-2 lg:flex lg:max-w-none lg:p-0">
 				{#each navItems as item (item.href)}
-					<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined} class="flex flex-col items-center justify-center gap-1 rounded-control p-2 text-xs text-muted transition-colors aria-[current=page]:bg-surplus-bg aria-[current=page]:font-semibold aria-[current=page]:text-ink hover:not-aria-[current=page]:bg-surplus-bg hover:not-aria-[current=page]:text-ink md:flex-row md:gap-2 md:p-3 md:text-sm">
+					<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined} class="flex flex-col items-center justify-center gap-1 rounded-control p-2 text-xs text-muted transition-colors aria-[current=page]:bg-surplus-bg aria-[current=page]:font-semibold aria-[current=page]:text-ink hover:not-aria-[current=page]:bg-surplus-bg hover:not-aria-[current=page]:text-ink lg:flex-row lg:gap-2 lg:p-3 lg:text-sm">
 						{@render NavGlyph({ name: item.icon, active: isActive(item.href) })}
 						{item.label}
 					</a>
@@ -111,7 +112,7 @@
 			class="app-help flex h-11 w-11 shrink-0 items-center justify-center rounded-control border border-line bg-white font-semibold transition-colors hover:enabled:bg-surplus-bg"
 		>?</button>
 	</header>
-	<main class="px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:px-8 md:pt-8 md:pb-12">
+	<main class="px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:px-8 md:pt-8 lg:pb-12">
 		{@render children()}
 	</main>
 	<StepGuide open={helpOpen} onclose={closeGuide} />
@@ -142,6 +143,9 @@
 			<path d="M9 20V4" />
 			<path d="M14 20v-7" />
 			<path d="M19 20V8" />
+		{:else if name === 'payables'}
+			<rect x="4" y="5" width="16" height="16" rx="2" />
+			<path d="M8 3v4M16 3v4M4 10h16M8 15l2 2 5-4" />
 		{:else}
 			<circle cx="12" cy="12" r="3" />
 			<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />

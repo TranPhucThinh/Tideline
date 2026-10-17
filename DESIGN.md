@@ -198,6 +198,10 @@ Manrope carries headings and numeric emphasis; Be Vietnam Pro carries body copy 
 
 The app is mobile-first, capped at 30rem with fixed bottom navigation and safe-area padding. At 48rem it widens to 64rem and moves navigation into the header; content padding grows from 1.25rem to 2rem. Today uses a 1.2fr/1fr desktop grid, with the entry form beside the balance and transactions. Settings uses two desktop columns with appearance spanning both; choices split at 40rem. Panels use 1.25rem padding, growing to 1.5rem on desktop; recurring major gaps are 1.5rem.
 
+Payables places the compact forecast beside the payment schedule from 48rem, stacking them on mobile. Its three view choices share the available width. Forecast breakdown and filters expand on demand; the amount after previous-cycle arrears stays visible whenever arrears exist. Payment details emphasize the earliest unpaid occurrence and disclose the remaining schedule. Primary payment actions use the shared button styles; adjustments are secondary disclosures.
+
+Payables dialogs announce their heading and provide a return path for actions opened from item details. Create/edit drafts survive dialog dismissal within the page, refreshing untouched fields from current data when reopened. Drafts clear after a successful save and do not persist across page navigation or reload. Savings copy describes a hypothetical exclusion of recurring items without assuming the commitments are optional.
+
 ## Elevation & Depth
 
 Hiện tại uses flat surfaces and borders, with a separate dialog shadow. Nổi mềm uses paired diffuse shadows: raised panels at 8px offsets, controls at 4px offsets, inset fields at 4px offsets and pressed controls at 2px offsets. Highlight opacity is 85%; the shadow tint changes with each pastel palette. Dialogs use a larger paired shadow. Primary actions add a small inner highlight. Exact shadow strings are recorded in the sidecar.

@@ -12,7 +12,9 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:ledger": "node --experimental-strip-types scripts/verify-ledger.mjs",
 		"test:cycle": "node --experimental-strip-types scripts/verify-cycle.mjs",
-		"test": "node --experimental-strip-types scripts/verify-ledger.mjs && node --experimental-strip-types scripts/verify-cycle.mjs"
+		"test:payables": "node --experimental-strip-types --test scripts/verify-payables.mjs",
+		"test:payables-view": "node scripts/verify-payables-view.mjs",
+		"test": "node --experimental-strip-types scripts/verify-ledger.mjs && node --experimental-strip-types scripts/verify-cycle.mjs && node --experimental-strip-types --test scripts/verify-payables.mjs && node scripts/verify-payables-view.mjs"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",
